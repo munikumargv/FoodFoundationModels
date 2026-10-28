@@ -1,0 +1,410 @@
+# Food habits of the 25 most populous countries (UN World Population Prospects
+# ranking, ~2024). To use a different "top 25" (e.g. by GDP), edit this list;
+# every entry needs the same keys (see tests/test_knowledge.py).
+#
+# guideline: national food-based dietary guideline (FBDG); verify the latest
+#            edition via the FAO FBDG repository before production use.
+
+last_reviewed: "2026-10"
+ranking_basis: "population"
+
+countries:
+  - id: india
+    name: India
+    region: South Asia
+    guideline: "ICMR-NIN Dietary Guidelines for Indians (2024), 'My Plate for the Day'"
+    staples: [rice, wheat (roti/chapati), pulses (dal), "millets (ragi, jowar, bajra)", milk and curd, ghee, vegetables, spices]
+    typical_meals: "Breakfast of idli/dosa/poha/paratha; lunch and dinner of rice or roti with dal, sabzi (vegetable curry), curd and pickle; tea with milk and sugar through the day."
+    healthy_traditions: ["pulses with cereals (complementary protein)", "fermented foods (idli, dosa, curd)", "millets", "spices like turmeric", "high vegetarian share"]
+    concerns: ["iron-deficiency anaemia (especially women and children)", "vitamin B12 and D deficiency", "rising type 2 diabetes and refined carbohydrate intake", "high salt from pickles/snacks", "fried snacks and vanaspati (trans fat)", "child stunting alongside adult obesity"]
+    cultural_religious: ["~25-30% vegetarian", "Hindu beef avoidance", "Muslim halal practice", "Jain no-root-vegetable diet", "frequent fasting days (Navratri, Ekadashi, Ramadan)"]
+    nutrient_sources:
+      protein: [dal, chana, rajma, paneer, curd, eggs, chicken, fish]
+      iron: ["green leafy vegetables (palak, methi)", ragi, lentils, rajma, chicken liver]
+      calcium: [milk, curd, paneer, ragi, sesame (til)]
+      b12: [milk, curd, eggs, fish, fortified foods]
+    healthier_swaps: ["brown rice/millets for part of white rice", "roasted chana instead of namkeen", "mustard/groundnut oil in moderation instead of vanaspati", "less sugar in tea"]
+
+  - id: china
+    name: China
+    region: East Asia
+    guideline: "Chinese Dietary Guidelines (2022), Chinese Food Pagoda and Balanced Dietary Plate"
+    staples: [rice (south), wheat noodles and steamed buns (north), pork, vegetables, "soy foods (tofu, soy milk)", eggs, tea]
+    typical_meals: "Congee, baozi or soy milk with youtiao for breakfast; rice or noodles with several shared stir-fried vegetable and meat dishes at lunch and dinner."
+    healthy_traditions: ["high vegetable intake", "soy foods", "tea instead of sugary drinks", "shared dishes encouraging variety"]
+    concerns: ["very high sodium (soy sauce, pickles, MSG) - average salt intake ~10 g/day", "hypertension and stroke", "rising obesity and diabetes", "low dairy and calcium intake", "high cooking-oil use"]
+    cultural_religious: ["largely no dietary restrictions", "Buddhist vegetarian minority", "Hui/Uyghur Muslim halal practice", "high prevalence of lactose intolerance"]
+    nutrient_sources:
+      protein: [tofu, soy milk, eggs, fish, pork, chicken]
+      iron: [pork liver, beef, black fungus, tofu, leafy greens]
+      calcium: [calcium-set tofu, bok choy, sesame paste, small dried fish, dairy if tolerated]
+      b12: [eggs, fish, meat, fermented products (unreliable)]
+    healthier_swaps: ["low-sodium soy sauce and less salt", "steaming instead of deep-frying", "whole grains (millet, oats, corn) for part of white rice", "add milk or yoghurt daily"]
+
+  - id: united_states
+    name: United States
+    region: North America
+    guideline: "Dietary Guidelines for Americans (USDA/HHS), MyPlate - verify the current 2025-2030 edition"
+    staples: [wheat bread and pasta, beef, chicken, "dairy (milk, cheese)", potatoes, corn, processed and packaged foods, sugary beverages]
+    typical_meals: "Cereal or eggs and toast for breakfast; sandwich or fast food lunch; meat, starch and vegetable dinner; frequent snacking."
+    healthy_traditions: ["wide availability of fresh produce", "fortified foods (folic acid, vitamin D milk)", "diverse immigrant cuisines"]
+    concerns: ["~40% adult obesity", "high intake of ultra-processed foods, added sugars and sodium", "low fibre, fruit and vegetable intake", "large portion sizes", "food deserts and food insecurity"]
+    cultural_religious: ["diverse; growing vegetarian/vegan and plant-forward eating", "Kosher and halal communities"]
+    nutrient_sources:
+      protein: [chicken, beans, eggs, Greek yoghurt, fish, lean beef]
+      iron: [fortified cereals, beans, beef, spinach]
+      calcium: [milk, yoghurt, cheese, fortified plant milks]
+      b12: [dairy, meat, fortified cereals]
+    healthier_swaps: ["water instead of soda", "whole-grain bread and pasta", "beans and fish in place of processed meats", "half plate vegetables and fruits"]
+
+  - id: indonesia
+    name: Indonesia
+    region: Southeast Asia
+    guideline: "Pedoman Gizi Seimbang (Balanced Nutrition Guidelines), 'Isi Piringku'"
+    staples: [white rice, tempeh, tofu, fish, chicken, coconut milk, palm oil, chilli sambal, vegetables, instant noodles]
+    typical_meals: "Nasi uduk or nasi goreng breakfast; rice with lauk (fish, chicken, tempeh), sayur (vegetables) and sambal for main meals; fried snacks (gorengan)."
+    healthy_traditions: ["tempeh - fermented soy rich in protein", "abundant tropical fruits", "fish consumption", "vegetable dishes like gado-gado and sayur asem"]
+    concerns: ["child stunting (~20%)", "anaemia in women", "high fried-food and palm oil use", "rising diabetes", "high sugar in drinks (es teh manis)", "instant noodle reliance"]
+    cultural_religious: ["~87% Muslim: halal, Ramadan fasting", "Hindu Bali (no beef)", "Christian minorities"]
+    nutrient_sources:
+      protein: [tempeh, tofu, fish, eggs, chicken]
+      iron: [kangkung, spinach (bayam), chicken liver, beef, tempeh]
+      calcium: [ikan teri (anchovies), tofu, tempeh, milk]
+      b12: [fish, eggs, meat, tempeh (low/variable)]
+    healthier_swaps: ["boiled/steamed lauk instead of gorengan", "less sugar in teh", "add vegetables to every plate", "mix brown or red rice"]
+
+  - id: pakistan
+    name: Pakistan
+    region: South Asia
+    guideline: "Pakistan Dietary Guidelines for Better Nutrition (2019)"
+    staples: [wheat (roti/naan), rice, lentils (daal), chicken, mutton, beef, milk and lassi, ghee, vegetables]
+    typical_meals: "Paratha with eggs and tea for breakfast; roti with salan (curry), daal or sabzi; biryani and pulao on occasions."
+    healthy_traditions: ["whole-wheat atta roti", "lentils and chickpeas", "yoghurt and lassi"]
+    concerns: ["child stunting (~40%) and wasting", "anaemia in women", "vitamin D deficiency", "high ghee/banaspati (trans fat) use", "rising diabetes and hypertension"]
+    cultural_religious: ["~96% Muslim: halal, no pork or alcohol, Ramadan fasting"]
+    nutrient_sources:
+      protein: [daal, chana, eggs, chicken, mutton, milk, yoghurt]
+      iron: [beef, liver, lentils, spinach (palak), chickpeas]
+      calcium: [milk, yoghurt, lassi, sesame]
+      b12: [meat, milk, eggs]
+    healthier_swaps: ["vegetable oil in moderation instead of banaspati", "grilled tikka instead of fried", "more vegetables in salan", "less sugar in chai"]
+
+  - id: nigeria
+    name: Nigeria
+    region: West Africa
+    guideline: "Food-Based Dietary Guidelines for Nigeria (Federal Ministry of Health)"
+    staples: ["cassava (garri, fufu)", yam, rice (jollof), maize, sorghum, millet, beans (cowpea), plantain, palm oil, leafy vegetables, fish, goat meat]
+    typical_meals: "Akara or pap with moi-moi for breakfast; swallow (eba, pounded yam, amala) with soups (egusi, efo riro, okra) containing fish or meat; jollof rice."
+    healthy_traditions: ["leafy-vegetable soups", "cowpeas and beans", "fermented foods (ogiri, iru)", "fresh fruits"]
+    concerns: ["child stunting and wasting", "vitamin A and iron deficiency", "aflatoxin in grains/groundnuts", "rising hypertension (salt, bouillon cubes)", "food insecurity and inflation"]
+    cultural_religious: ["Muslim north (halal), Christian south", "Ramadan and Lenten fasting"]
+    nutrient_sources:
+      protein: [beans, cowpea, fish, eggs, goat meat, groundnuts]
+      iron: [ugwu (fluted pumpkin) leaves, beans, liver, red meat]
+      calcium: [small dried fish (crayfish), leafy vegetables, sesame (beniseed)]
+      b12: [fish, meat, eggs]
+    healthier_swaps: ["fewer bouillon cubes and less salt in soups", "more vegetables in soups, smaller swallow portions", "unripe plantain or beans with rice", "red palm oil in moderation (vitamin A)"]
+
+  - id: brazil
+    name: Brazil
+    region: South America
+    guideline: "Dietary Guidelines for the Brazilian Population (2014) - emphasises fresh/minimally processed foods, avoid ultra-processed"
+    staples: [rice and black beans (arroz e feijão), cassava (farinha), beef, chicken, fruits, coffee, bread]
+    typical_meals: "Coffee with bread and fruit for breakfast; lunch 'prato feito' of rice, beans, meat, salad and farofa; lighter dinner."
+    healthy_traditions: ["rice + beans complementary protein", "fresh tropical fruits", "home-cooked meals"]
+    concerns: ["rising ultra-processed food intake", "obesity (~25% adults)", "high sugar (sweetened coffee, soft drinks)", "food insecurity in some regions"]
+    cultural_religious: ["mostly Christian; few restrictions", "regional diversity (Amazonian, Northeastern, Southern churrasco)"]
+    nutrient_sources:
+      protein: [black beans, eggs, chicken, beef, fish]
+      iron: [black beans, beef, kale (couve)]
+      calcium: [milk, cheese (queijo minas), kale]
+      b12: [meat, dairy, eggs]
+    healthier_swaps: ["keep rice and beans, cut soft drinks", "fruit instead of sweets", "grilled rather than fried meat"]
+
+  - id: bangladesh
+    name: Bangladesh
+    region: South Asia
+    guideline: "Dietary Guidelines for Bangladesh (2013, updated 2020)"
+    staples: [white rice, fish, lentils (dal), vegetables, potatoes, mustard oil]
+    typical_meals: "Rice three times a day with dal, bhaji (vegetables) and fish curry; puffed rice (muri) snacks."
+    healthy_traditions: ["small whole fish (mola) rich in calcium and vitamin A", "lentils", "leafy greens (shak)"]
+    concerns: ["very rice-heavy diet with low diversity", "child stunting", "anaemia and zinc deficiency", "arsenic in groundwater/rice", "rising diabetes"]
+    cultural_religious: ["~90% Muslim: halal, Ramadan", "Hindu minority (no beef)"]
+    nutrient_sources:
+      protein: [fish, dal, eggs, chicken]
+      iron: [leafy greens (kochu shak), dal, small fish, liver]
+      calcium: [small fish eaten with bones, milk, leafy greens]
+      b12: [fish, eggs, milk]
+    healthier_swaps: ["smaller rice portion with more dal and vegetables", "small whole fish regularly", "less salt and fried snacks"]
+
+  - id: russia
+    name: Russia
+    region: Eastern Europe / North Asia
+    guideline: "Rospotrebnadzor MR 2.3.1.0253-21 physiological norms (2021) and healthy-eating recommendations"
+    staples: [rye and wheat bread, potatoes, buckwheat (grechka), cabbage, beets, "dairy (kefir, tvorog, smetana)", pork, sausage, pickled vegetables]
+    typical_meals: "Kasha or tvorog for breakfast; soup (borscht, shchi) followed by meat with potatoes or buckwheat; tea."
+    healthy_traditions: ["buckwheat and rye (whole grains)", "fermented dairy (kefir)", "sauerkraut and pickled vegetables"]
+    concerns: ["high alcohol consumption", "cardiovascular disease", "high salt (pickles, sausages)", "low fresh produce in winter", "vitamin D deficiency at high latitude"]
+    cultural_religious: ["Orthodox Christian fasting (Lent: no meat/dairy)", "Muslim regions (halal)"]
+    nutrient_sources:
+      protein: [tvorog, kefir, eggs, fish, chicken, buckwheat]
+      iron: [beef, buckwheat, liver, legumes]
+      calcium: [tvorog, kefir, cheese]
+      b12: [dairy, meat, fish]
+    healthier_swaps: ["fish instead of sausage", "frozen berries and vegetables in winter", "less salt in pickles", "limit alcohol"]
+
+  - id: ethiopia
+    name: Ethiopia
+    region: East Africa
+    guideline: "Ethiopian Food-Based Dietary Guidelines (2022)"
+    staples: [teff (injera), sorghum, maize, wheat, barley, legumes (shiro from chickpea/pea), lentils, kale (gomen), niter kibbeh (spiced butter), coffee]
+    typical_meals: "Injera with wot (stews): shiro, misir (lentil), doro wot (chicken) or vegetables; coffee ceremony."
+    healthy_traditions: ["teff - iron and fibre rich whole grain", "legume-based fasting dishes", "fermented injera"]
+    concerns: ["child stunting (~35%)", "food insecurity and drought", "vitamin A, iodine and zinc deficiency", "low animal-source food intake"]
+    cultural_religious: ["Orthodox Christian fasting ~180+ days/year (vegan on fasting days)", "Muslim halal community"]
+    nutrient_sources:
+      protein: [shiro, lentils, chickpeas, eggs, meat on non-fasting days]
+      iron: [teff, lentils, gomen]
+      calcium: [teff, milk, gomen]
+      b12: [meat, dairy, eggs (low on fasting days)]
+    healthier_swaps: ["iodized salt", "add eggs/dairy for children on non-fasting days", "more vegetables with injera"]
+
+  - id: mexico
+    name: Mexico
+    region: North America
+    guideline: "Guías Alimentarias Saludables y Sostenibles para la Población Mexicana (2023)"
+    staples: ["maize (tortillas, nixtamalised)", beans, chilli, tomato, avocado, squash, rice, chicken, pork, cheese, sugary drinks]
+    typical_meals: "Huevos con frijoles and tortillas for breakfast; comida (main midday meal) of soup, rice, beans and meat/stew; light cena (tacos, pan dulce)."
+    healthy_traditions: ["milpa (maize, beans, squash)", "nixtamalised maize adds calcium and niacin", "nopales, avocado, chilli"]
+    concerns: ["one of the highest obesity and diabetes rates (~36% adult obesity)", "very high sugary-drink consumption", "ultra-processed snacks", "front-of-pack warning labels in place"]
+    cultural_religious: ["mostly Catholic; Lenten meat avoidance"]
+    nutrient_sources:
+      protein: [beans, eggs, chicken, fish, queso fresco]
+      iron: [beans, beef, nopales]
+      calcium: [nixtamalised tortillas, cheese, milk]
+      b12: [meat, dairy, eggs]
+    healthier_swaps: ["agua natural instead of soda/aguas frescas with sugar", "whole beans instead of refried with lard", "grilled instead of fried antojitos"]
+
+  - id: japan
+    name: Japan
+    region: East Asia
+    guideline: "Japanese Food Guide Spinning Top (2005) and Dietary Reference Intakes for Japanese (2025)"
+    staples: [rice, fish and seafood, "soy (miso, tofu, natto)", seaweed, vegetables, green tea, noodles]
+    typical_meals: "Ichiju-sansai: rice, miso soup and three side dishes (fish, vegetable, pickles); bento lunches."
+    healthy_traditions: ["high fish and soy intake", "small portions (hara hachi bu)", "seaweed (iodine)", "fermented foods", "world's highest life expectancy"]
+    concerns: ["high sodium (miso, soy sauce, pickles) ~10 g salt/day", "stomach cancer and stroke historically", "excess iodine from seaweed", "ageing population (sarcopenia, frailty)", "underweight young women"]
+    cultural_religious: ["few restrictions; Buddhist shojin ryori vegetarian tradition"]
+    nutrient_sources:
+      protein: [fish, tofu, natto, eggs, chicken]
+      iron: [clams, hijiki, natto, spinach, beef]
+      calcium: [small fish, tofu, dairy, komatsuna]
+      b12: [fish, shellfish, eggs]
+    healthier_swaps: ["low-sodium miso and soy sauce", "drink only half the noodle broth", "add dairy for calcium"]
+
+  - id: egypt
+    name: Egypt
+    region: Middle East / North Africa
+    guideline: "Food-Based Dietary Guidelines for Egypt (National Nutrition Institute)"
+    staples: [baladi bread (wheat), fava beans (ful medames), rice, lentils, koshari, vegetables, cheese, sugar-sweetened tea]
+    typical_meals: "Ful medames, ta'meya (falafel), bread and cheese for breakfast; rice or bread with vegetable stews (molokhia) and meat/chicken; koshari."
+    healthy_traditions: ["legumes daily (ful, lentils)", "molokhia and leafy greens", "olive oil"]
+    concerns: ["high obesity (~30%+) especially women", "child stunting and anaemia (double burden)", "subsidised bread and refined carbs", "high sugar in tea", "hypertension and hepatitis-related liver disease"]
+    cultural_religious: ["~90% Muslim: halal, Ramadan", "Coptic Christian fasting (vegan periods)"]
+    nutrient_sources:
+      protein: [ful, lentils, eggs, chicken, fish, cheese]
+      iron: [ful, lentils, liver, molokhia]
+      calcium: [cheese, milk, yoghurt, sesame (tahini)]
+      b12: [dairy, eggs, meat]
+    healthier_swaps: ["whole-wheat baladi bread", "less sugar in tea", "baked ta'meya", "smaller koshari portions with more salad"]
+
+  - id: philippines
+    name: Philippines
+    region: Southeast Asia
+    guideline: "Nutritional Guidelines for Filipinos (2012) and 'Pinggang Pinoy' (FNRI)"
+    staples: [white rice, fish, pork, chicken, coconut, noodles (pancit), vegetables, processed meats, bread (pandesal)]
+    typical_meals: "Silog (garlic rice, egg and meat) breakfast; rice with ulam (adobo, sinigang, fried fish); merienda snacks."
+    healthy_traditions: ["sinigang and vegetable-rich soups", "fish and seafood", "malunggay (moringa) leaves"]
+    concerns: ["child stunting (~27%)", "rising hypertension and diabetes", "high salt (patis, bagoong)", "processed meats (hotdog, longganisa)", "sugary drinks"]
+    cultural_religious: ["mostly Catholic (Lenten abstinence)", "Muslim Mindanao (halal)"]
+    nutrient_sources:
+      protein: [fish, eggs, monggo (mung beans), chicken, tofu (tokwa)]
+      iron: [monggo, malunggay, liver, shellfish]
+      calcium: [dilis (small fish), malunggay, milk]
+      b12: [fish, shellfish, eggs]
+    healthier_swaps: ["more vegetables per ulam", "less patis/bagoong", "grilled fish over fried pork", "brown rice"]
+
+  - id: dr_congo
+    name: Democratic Republic of the Congo
+    region: Central Africa
+    guideline: "No widely published national FBDG - use WHO healthy diet and WHO/UNICEF infant feeding guidance"
+    staples: [cassava (fufu/chikwangue), cassava leaves (pondu), maize, plantain, beans, groundnuts, palm oil, fish (smoked/dried), caterpillars and bushmeat in some areas]
+    typical_meals: "Fufu with pondu (cassava leaves cooked with palm oil and fish) or bean stew; usually 1-2 meals a day."
+    healthy_traditions: ["cassava leaves - protein, vitamin A and iron", "groundnuts", "edible insects (protein, iron)"]
+    concerns: ["severe food insecurity", "child stunting (~40%)", "cassava-heavy, protein-poor diet", "konzo/cyanide risk from poorly processed bitter cassava", "vitamin A, iron and iodine deficiency"]
+    cultural_religious: ["mostly Christian; few formal restrictions"]
+    nutrient_sources:
+      protein: [beans, groundnuts, dried fish, caterpillars, eggs]
+      iron: [cassava leaves, beans, caterpillars]
+      calcium: [dried small fish, leafy greens]
+      b12: [fish, meat, insects]
+    healthier_swaps: ["properly soak/ferment cassava", "add beans or groundnuts to fufu meals", "iodized salt"]
+
+  - id: vietnam
+    name: Vietnam
+    region: Southeast Asia
+    guideline: "Vietnamese Nutrition Tower / dietary guidelines (National Institute of Nutrition)"
+    staples: [rice, "rice noodles (pho, bun)", fish, pork, vegetables and herbs, fish sauce (nuoc mam), tofu, tropical fruits]
+    typical_meals: "Pho or banh mi for breakfast; rice with boiled vegetables, braised fish or pork, and soup (canh)."
+    healthy_traditions: ["abundant fresh herbs and vegetables", "broths and soups", "steaming and boiling"]
+    concerns: ["high sodium (fish sauce)", "rising obesity in cities", "child stunting in rural/ethnic minority areas", "anaemia", "street-food hygiene"]
+    cultural_religious: ["Buddhist vegetarian days (1st and 15th of lunar month)", "few restrictions otherwise"]
+    nutrient_sources:
+      protein: [fish, tofu, eggs, pork, chicken]
+      iron: [beef, water spinach (rau muong), tofu, shellfish]
+      calcium: [small shrimp/crab, tofu, leafy greens]
+      b12: [fish, shellfish, eggs]
+    healthier_swaps: ["dilute fish sauce", "fewer sugary milk coffees", "fruit instead of sweet che daily"]
+
+  - id: iran
+    name: Iran
+    region: Middle East
+    guideline: "Iranian Food-Based Dietary Guidelines (Ministry of Health)"
+    staples: [rice (chelow/polow), "flatbreads (lavash, sangak, barbari)", lamb, chicken, "yoghurt (mast, doogh)", legumes, herbs, saffron, dates, nuts]
+    typical_meals: "Bread, feta cheese, walnuts and herbs with tea for breakfast; rice with stews (khoresh: ghormeh sabzi, gheymeh) or kebab; ash (thick soups)."
+    healthy_traditions: ["fresh herbs (sabzi khordan)", "legumes in stews", "yoghurt and doogh", "nuts and dried fruits"]
+    concerns: ["high bread/rice and sugar intake", "obesity and diabetes", "vitamin D deficiency despite sun", "high salt", "hydrogenated oils historically"]
+    cultural_religious: ["Shia Muslim: halal, Ramadan fasting"]
+    nutrient_sources:
+      protein: [lentils, chickpeas, chicken, lamb, yoghurt, eggs]
+      iron: [lamb, lentils, herbs, dried apricots]
+      calcium: [yoghurt, doogh, cheese]
+      b12: [dairy, meat]
+    healthier_swaps: ["whole-grain sangak bread", "less sugar with tea", "limit tahdig and fried dishes"]
+
+  - id: turkey
+    name: Türkiye
+    region: Europe / Middle East
+    guideline: "Türkiye Beslenme Rehberi (TÜBER 2022)"
+    staples: [wheat bread and bulgur, yoghurt and ayran, white cheese, olives and olive oil, legumes, vegetables, lamb and chicken, tea]
+    typical_meals: "Kahvaltı (cheese, olives, tomatoes, eggs, bread, tea); lunch/dinner of soup, legume or vegetable dishes in olive oil (zeytinyağlı), pilav, kebab."
+    healthy_traditions: ["olive-oil vegetable dishes", "bulgur and legumes", "yoghurt", "Mediterranean pattern"]
+    concerns: ["very high bread consumption", "obesity (~30%+)", "high salt and sugar (tea, desserts)", "low physical activity"]
+    cultural_religious: ["~99% Muslim: halal, Ramadan (iftar/sahur)"]
+    nutrient_sources:
+      protein: [lentils, chickpeas, yoghurt, cheese, eggs, chicken]
+      iron: [lentils, red meat, spinach, molasses (pekmez)]
+      calcium: [yoghurt, ayran, cheese, tahini]
+      b12: [dairy, meat, eggs]
+    healthier_swaps: ["whole-grain bread and smaller portions", "less sugar in tea", "fruit instead of baklava daily"]
+
+  - id: germany
+    name: Germany
+    region: Western Europe
+    guideline: "DGE (German Nutrition Society) food-based dietary guidelines (2024), 'DGE-Ernährungskreis'"
+    staples: [whole-grain and rye bread, potatoes, pork, sausages, dairy, cabbage, beer, cakes]
+    typical_meals: "Bread rolls with cheese/cold cuts for breakfast; warm lunch of meat, potatoes and vegetables; Abendbrot (bread-based cold dinner)."
+    healthy_traditions: ["whole-grain breads", "sauerkraut", "seasonal vegetables", "growing plant-based eating"]
+    concerns: ["high processed meat intake", "alcohol", "overweight (~50%+)", "vitamin D insufficiency in winter", "iodine (moderate)"]
+    cultural_religious: ["~10% vegetarian/vegan", "Muslim minority (halal)"]
+    nutrient_sources:
+      protein: [quark, legumes, eggs, fish, poultry]
+      iron: [whole grains, legumes, meat]
+      calcium: [milk, cheese, quark, mineral water rich in calcium]
+      b12: [dairy, meat, eggs]
+    healthier_swaps: ["legumes and fish instead of Wurst", "more vegetables at Abendbrot", "limit alcohol"]
+
+  - id: thailand
+    name: Thailand
+    region: Southeast Asia
+    guideline: "Thai Food-Based Dietary Guidelines, 'Nutrition Flag'"
+    staples: [jasmine and sticky rice, fish, pork, chicken, vegetables and herbs, coconut milk, fish sauce, chilli, tropical fruits]
+    typical_meals: "Rice soup (jok) or grilled pork with sticky rice; curries, stir-fries, som tam (papaya salad); frequent street food."
+    healthy_traditions: ["herbs and vegetables", "fish", "spicy salads (yam)"]
+    concerns: ["high sugar (sweet drinks, desserts) and sodium", "rising obesity and diabetes", "coconut-milk saturated fat", "liver fluke from raw fish (north-east)"]
+    cultural_religious: ["~94% Buddhist; vegetarian festival", "Muslim south (halal)"]
+    nutrient_sources:
+      protein: [fish, eggs, tofu, chicken, pork]
+      iron: [morning glory, liver, beef, shellfish]
+      calcium: [small fish, tofu, leafy greens]
+      b12: [fish, eggs, meat]
+    healthier_swaps: ["clear soups instead of coconut curries", "less sugar in drinks", "brown rice", "cook fish thoroughly"]
+
+  - id: united_kingdom
+    name: United Kingdom
+    region: Western Europe
+    guideline: "Eatwell Guide (Public Health England / OHID, 2016)"
+    staples: [bread, potatoes, beef and chicken, dairy, tea with milk, breakfast cereals, baked beans, ready meals]
+    typical_meals: "Cereal or toast for breakfast; sandwich lunch; meat and two veg, curry or ready meal for dinner."
+    healthy_traditions: ["fortified flour and cereals", "milk with tea", "salt reduction programme success"]
+    concerns: ["high ultra-processed food share (~50%+ of energy)", "obesity (~26%)", "low fibre (~20 g/day vs 30 g target)", "vitamin D deficiency (supplement advised Oct-Mar)"]
+    cultural_religious: ["diverse: South Asian, Caribbean, Muslim, Jewish, vegetarian/vegan communities"]
+    nutrient_sources:
+      protein: [eggs, beans, chicken, fish, dairy]
+      iron: [fortified cereals, red meat, beans]
+      calcium: [milk, cheese, fortified bread]
+      b12: [dairy, meat, fortified cereals]
+    healthier_swaps: ["wholemeal bread and porridge", "oily fish once a week", "fewer ready meals", "vitamin D 10 mcg in winter"]
+
+  - id: tanzania
+    name: Tanzania
+    region: East Africa
+    guideline: "Tanzania Food-Based Dietary Guidelines (Tanzania Food and Nutrition Centre)"
+    staples: [maize (ugali), rice, cassava, plantain (matoke), beans, leafy greens (mchicha), fish (dagaa), coconut]
+    typical_meals: "Chai with mandazi or uji (porridge) for breakfast; ugali with beans, mchicha or fish stew; pilau on occasions."
+    healthy_traditions: ["dagaa (small dried fish) - calcium", "leafy greens", "beans"]
+    concerns: ["child stunting (~30%)", "anaemia", "maize-dominant diet", "aflatoxin", "rising urban obesity"]
+    cultural_religious: ["Muslim (coast, Zanzibar) and Christian populations"]
+    nutrient_sources:
+      protein: [beans, dagaa, eggs, groundnuts, chicken]
+      iron: [mchicha, beans, liver]
+      calcium: [dagaa, milk, leafy greens]
+      b12: [fish, meat, milk]
+    healthier_swaps: ["whole maize flour (dona) instead of refined (sembe)", "beans or dagaa with every ugali", "less sugar in chai"]
+
+  - id: france
+    name: France
+    region: Western Europe
+    guideline: "PNNS 4 / Santé publique France recommendations (2019), 'Manger Bouger'"
+    staples: [bread (baguette), cheese, wine, vegetables, meat, fish, yoghurt, pastries]
+    typical_meals: "Light breakfast (bread, coffee); structured lunch with entrée, plat, cheese/dessert; family dinner."
+    healthy_traditions: ["structured meal times, little snacking", "vegetables and portion control", "fermented dairy"]
+    concerns: ["alcohol", "high salt in bread and cheese", "rising ultra-processed food intake in youth", "saturated fat"]
+    cultural_religious: ["secular; large Muslim and Jewish communities"]
+    nutrient_sources:
+      protein: [fish, legumes, eggs, poultry, yoghurt]
+      iron: [lentils, meat, whole grains]
+      calcium: [cheese, yoghurt, milk]
+      b12: [dairy, meat, fish]
+    healthier_swaps: ["whole-grain bread", "legumes twice a week (PNNS)", "limit charcuterie and alcohol"]
+
+  - id: south_africa
+    name: South Africa
+    region: Southern Africa
+    guideline: "South African Food-Based Dietary Guidelines (2012)"
+    staples: [maize meal (pap), bread, meat (braai), chicken, potatoes, rice, beans, vegetables (morogo), sugary drinks]
+    typical_meals: "Maize porridge or bread with tea; pap with meat or chicken stew and chakalaka; braai on weekends."
+    healthy_traditions: ["morogo (wild leafy greens)", "legumes (samp and beans)", "fortified maize and bread flour"]
+    concerns: ["high obesity (~40%+ women)", "hypertension and diabetes", "child stunting alongside obesity", "high salt (mandatory sodium reduction)", "HIV-nutrition interactions"]
+    cultural_religious: ["mostly Christian; Muslim and Hindu communities (Cape Malay, Indian South Africans)"]
+    nutrient_sources:
+      protein: [beans, eggs, chicken, pilchards (canned fish), milk]
+      iron: [fortified maize meal, morogo, beans, red meat]
+      calcium: [milk, amasi (fermented milk), pilchards with bones]
+      b12: [meat, milk, eggs]
+    healthier_swaps: ["water instead of sugary drinks", "grill lean cuts, fewer boerewors", "brown bread and more vegetables"]
+
+  - id: italy
+    name: Italy
+    region: Southern Europe
+    guideline: "Linee Guida per una Sana Alimentazione (CREA, 2018)"
+    staples: [pasta, bread, olive oil, tomatoes, vegetables, legumes, cheese, fish, cured meats, wine]
+    typical_meals: "Coffee and pastry breakfast; pasta primo then meat/fish secondo with contorno (vegetables); fruit."
+    healthy_traditions: ["Mediterranean diet (UNESCO heritage)", "extra-virgin olive oil", "legumes (pasta e fagioli)", "seasonal produce"]
+    concerns: ["high childhood overweight in south", "declining Mediterranean adherence", "salt from cured meats and cheese", "large refined pasta/bread portions"]
+    cultural_religious: ["mostly Catholic; few restrictions"]
+    nutrient_sources:
+      protein: [legumes, fish, eggs, cheese, poultry]
+      iron: [legumes, meat, leafy greens]
+      calcium: [parmigiano, ricotta, milk, yoghurt]
+      b12: [dairy, meat, fish]
+    healthier_swaps: ["whole-grain pasta with legumes", "limit salumi", "keep olive oil and vegetables central"]

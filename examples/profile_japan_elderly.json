@@ -1,0 +1,16 @@
+{
+  "country": "japan",
+  "age": 79,
+  "sex": "female",
+  "weight_kg": 47,
+  "height_cm": 150,
+  "activity_level": "sedentary",
+  "life_stage": "none",
+  "dietary_pattern": "pescatarian",
+  "medical_conditions": ["osteoporosis"],
+  "allergies": [],
+  "goal": "maintain_health",
+  "budget": "medium",
+  "climate": "temperate",
+  "lifestyle": []
+}

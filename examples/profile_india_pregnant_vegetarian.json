@@ -1,0 +1,16 @@
+{
+  "country": "india",
+  "age": 28,
+  "sex": "female",
+  "weight_kg": 58,
+  "height_cm": 158,
+  "activity_level": "light",
+  "life_stage": "pregnant_t2",
+  "dietary_pattern": "vegetarian_lacto_ovo",
+  "medical_conditions": ["anaemia"],
+  "allergies": [],
+  "goal": "maintain_health",
+  "budget": "low",
+  "climate": "hot_humid",
+  "lifestyle": []
+}

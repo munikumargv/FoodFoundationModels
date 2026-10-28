@@ -1,0 +1,133 @@
+# Other factors that change nutrition recommendations, beyond country and age.
+# Each option has `adjustments` (what changes) and optionally `safety` notes
+# (when the model must defer to a clinician).
+
+last_reviewed: "2026-10"
+
+factors:
+  sex:
+    question: "Biological sex (affects energy and several nutrient targets)"
+    options:
+      male:
+        adjustments: ["Higher energy, protein (by body weight), zinc, vitamin A/C and fibre targets than females of the same age."]
+      female:
+        adjustments: ["Iron 18 mg/day at ages 19-50 (menstruation); calcium rises to 1200 mg at 51+; folic acid if pregnancy is possible."]
+
+  activity_level:
+    question: "Physical activity level"
+    options:
+      sedentary:
+        adjustments: ["PAL 1.40. Mostly sitting; prioritise nutrient density and fibre to manage energy intake.", "Encourage reaching WHO 150 min/week activity."]
+      light:
+        adjustments: ["PAL 1.55. Walking/standing work or light exercise 1-3 days/week."]
+      moderate:
+        adjustments: ["PAL 1.75. Exercise 3-5 days/week; include carbohydrate around training and 1.2-1.6 g/kg protein if training for strength."]
+      vigorous:
+        adjustments: ["PAL 2.00. Heavy manual labour or daily intense training; carbohydrate 5-8 g/kg/day for endurance, protein 1.4-2.0 g/kg, plan fluids and electrolytes."]
+
+  life_stage:
+    question: "Pregnancy / lactation status (women 14-50)"
+    options:
+      none: {adjustments: []}
+      pregnant_t1: {adjustments: ["No extra energy; folic acid, iron 27 mg, iodine 220-250 mcg; food safety."]}
+      pregnant_t2: {adjustments: ["+340 kcal/day; protein 1.1 g/kg; iron 27 mg; DHA."]}
+      pregnant_t3: {adjustments: ["+452 kcal/day; protein 1.1 g/kg; iron 27 mg; DHA."]}
+      lactating: {adjustments: ["+330 kcal/day; protein 1.3 g/kg; iodine 290 mcg; vitamin A 1300 mcg RAE; fluids."]}
+
+  dietary_pattern:
+    question: "Dietary pattern / religious or ethical practice"
+    options:
+      omnivore: {adjustments: ["Prefer fish 2x/week, legumes and poultry over processed and red meat (<350-500 g cooked red meat per week)."]}
+      vegetarian_lacto_ovo: {adjustments: ["Iron intake 1.8x RDA with vitamin C at meals; B12 from dairy/eggs/fortified foods; combine cereals and pulses for protein quality."]}
+      vegan: {adjustments: ["B12 supplement or fortified foods are essential; plan calcium, iodine, vitamin D, zinc, omega-3 (ALA/algal DHA); iron 1.8x RDA."]}
+      pescatarian: {adjustments: ["Choose low-mercury fish; good omega-3 intake; watch iron if no red meat."]}
+      halal: {adjustments: ["No pork or alcohol, meat slaughtered per Islamic law; during Ramadan plan suhoor (slow carbs, protein, fluids) and iftar (dates, water, balanced meal, avoid fried excess)."]}
+      kosher: {adjustments: ["No pork or shellfish; meat and dairy not combined; certified products."]}
+      hindu_no_beef: {adjustments: ["No beef; often lacto-vegetarian; consider fasting days (e.g. Navratri, Ekadashi) and keep protein from dairy, pulses and nuts."]}
+      jain: {adjustments: ["Strict vegetarian, no root vegetables (onion, garlic, potato, carrot), often no eating after sunset; B12 and protein from dairy and pulses need attention."]}
+      buddhist_vegetarian: {adjustments: ["Often vegetarian, may avoid pungent vegetables; plan B12, iron and protein."]}
+      keto_low_carb: {adjustments: ["Not recommended for children, pregnancy or certain conditions; ensure fibre and micronutrients; prefer unsaturated fats."]}
+
+  medical_conditions:
+    question: "Medical conditions (select all that apply)"
+    options:
+      none: {adjustments: []}
+      type2_diabetes:
+        adjustments: ["Consistent carbohydrate portions, low glycaemic index whole grains and pulses, fibre ≥25-35 g, limit free sugars and sugary drinks, pair carbs with protein/fat."]
+        safety: "Medication (insulin, sulfonylureas) dosing interacts with diet - coordinate changes with the treating clinician."
+      prediabetes: {adjustments: ["5-7% weight loss if overweight, 150 min/week activity, whole grains, reduce sugary drinks and refined starches."]}
+      hypertension:
+        adjustments: ["DASH-style pattern: sodium <1500-2000 mg, potassium-rich fruits/vegetables, low-fat dairy, nuts, legumes; limit alcohol."]
+        safety: "Potassium increases may be unsafe with kidney disease or certain medicines (ACE inhibitors, potassium-sparing diuretics)."
+      dyslipidaemia: {adjustments: ["Saturated fat <7-10% energy, eliminate trans fat, soluble fibre (oats, legumes), nuts, oily fish, plant sterols."]}
+      obesity:
+        adjustments: ["Moderate deficit (~500 kcal/day), high-fibre and protein-adequate meals, reduce ultra-processed foods and sugary drinks; sustainable habits over crash diets."]
+        safety: "Do not prescribe deficits for children, pregnancy or lactation; refer for clinical weight management if BMI ≥35 or with comorbidities."
+      underweight_malnutrition:
+        adjustments: ["Energy- and protein-dense foods, frequent small meals, nuts, oils, dairy, eggs, legumes; address micronutrients."]
+        safety: "Severe acute malnutrition and refeeding risk require clinical management."
+      chronic_kidney_disease:
+        adjustments: ["Individualised protein (often 0.55-0.8 g/kg in non-dialysis CKD), sodium, potassium and phosphorus control."]
+        safety: "Requires a renal dietitian; general high-protein or high-potassium advice can be harmful."
+      celiac_disease: {adjustments: ["Strict gluten-free: no wheat, barley, rye (and contaminated oats); use rice, maize, millet, sorghum, teff, quinoa, buckwheat; watch iron, folate, fibre, B vitamins."]}
+      lactose_intolerance: {adjustments: ["Lactose-free milk, yoghurt and hard cheese are often tolerated; fortified plant milks; maintain calcium and vitamin D."]}
+      anaemia:
+        adjustments: ["Iron-rich foods (meat, fish, legumes, dark greens) with vitamin C; avoid tea/coffee with meals; folate and B12 sources."]
+        safety: "Cause should be diagnosed; iron supplements per clinician."
+      osteoporosis: {adjustments: ["Calcium 1000-1200 mg and vitamin D 800-1000 IU, adequate protein, weight-bearing exercise, limit alcohol and excess salt."]}
+      gout: {adjustments: ["Limit organ meats, shellfish, alcohol (especially beer) and sugary/fructose drinks; low-fat dairy and hydration may help."]}
+      pcos: {adjustments: ["Low-GI, high-fibre pattern, adequate protein, weight management if overweight, regular activity."]}
+      ibs: {adjustments: ["Regular meals, soluble fibre, consider a dietitian-guided low-FODMAP trial."]}
+      eating_disorder_history:
+        adjustments: ["Avoid calorie counting, weight-loss targets and restrictive framing; focus on regular, adequate, flexible eating."]
+        safety: "Refer to an eating-disorder specialist team; never provide deficit targets."
+
+  allergies:
+    question: "Food allergies (select all that apply)"
+    options:
+      none: {adjustments: []}
+      peanut: {adjustments: ["Exclude peanuts and check labels; use seeds (sunflower, pumpkin) for healthy fats."]}
+      tree_nut: {adjustments: ["Exclude tree nuts; seeds are usually safe alternatives."]}
+      milk: {adjustments: ["Exclude dairy; calcium- and vitamin-D-fortified soy/oat milk; calcium-set tofu, leafy greens."]}
+      egg: {adjustments: ["Exclude eggs; protein from legumes, fish, meat, dairy."]}
+      fish_shellfish: {adjustments: ["Exclude fish/shellfish; omega-3 from walnuts, flax, chia or algal oil."]}
+      wheat: {adjustments: ["Exclude wheat; use rice, maize, millet, oats (if tolerated)."]}
+      soy: {adjustments: ["Exclude soy; check processed foods and Asian sauces."]}
+      sesame: {adjustments: ["Exclude sesame (tahini, many breads and Middle Eastern/Asian dishes)."]}
+    safety: "Anaphylaxis history requires an allergist's plan; never suggest allergen challenges at home."
+
+  goal:
+    question: "Primary goal"
+    options:
+      maintain_health: {adjustments: []}
+      weight_loss: {adjustments: ["~500 kcal/day below requirement within safety floors; protein ≥1.0-1.2 g/kg to preserve muscle."]}
+      weight_gain: {adjustments: ["~300-500 kcal/day above requirement with resistance training; energy-dense whole foods."]}
+      muscle_gain: {adjustments: ["Protein 1.6-2.2 g/kg spread over 3-5 meals, small energy surplus, resistance training."]}
+      manage_condition: {adjustments: ["Follow condition-specific adjustments; coordinate with clinician."]}
+
+  budget:
+    question: "Food budget / access"
+    options:
+      low: {adjustments: ["Prioritise low-cost nutrient-dense staples: pulses, eggs, seasonal vegetables, whole grains, small fish, frozen/canned vegetables; minimise waste."]}
+      medium: {adjustments: []}
+      high: {adjustments: ["Wider variety possible, but avoid unnecessary supplements and 'superfood' marketing."]}
+
+  climate:
+    question: "Climate"
+    options:
+      hot_humid: {adjustments: ["Higher fluid and electrolyte needs; food-safety vigilance (rapid spoilage)."]}
+      temperate: {adjustments: []}
+      cold_high_latitude: {adjustments: ["Low winter sunlight: vitamin D from fortified foods/oily fish or supplements."]}
+      high_altitude: {adjustments: ["Higher iron demand and fluid losses; adequate carbohydrate."]}
+
+  lifestyle:
+    question: "Lifestyle factors (select all that apply)"
+    options:
+      none: {adjustments: []}
+      smoker: {adjustments: ["Vitamin C +35 mg/day; encourage cessation; more fruit and vegetables."]}
+      alcohol: {adjustments: ["No safe level for health (WHO); if drinking, limit and never in pregnancy; displaces nutrients (thiamine, folate)."]}
+      shift_work: {adjustments: ["Anchor meals to the sleep schedule, avoid heavy meals during night shifts, plan healthy portable snacks, limit caffeine 6 h before sleep."]}
+      high_stress_poor_sleep: {adjustments: ["Regular meals, limit caffeine and alcohol, magnesium-rich foods (nuts, legumes, whole grains)."]}
+
+  medications:
+    note: "Diet-drug interactions (e.g. warfarin and vitamin K, MAOIs and tyramine, metformin and B12, grapefruit with statins/calcium-channel blockers) must be checked with a pharmacist or physician."

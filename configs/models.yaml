@@ -1,0 +1,42 @@
+# Open-weight base models offered in the selection menu.
+# Any Hugging Face causal-LM with a chat template works; add entries here.
+# `min_vram_gb` is an approximate requirement for 4-bit QLoRA training.
+
+default: qwen2.5-7b
+
+models:
+  qwen2.5-7b:
+    hf_id: Qwen/Qwen2.5-7B-Instruct
+    license: Apache-2.0
+    min_vram_gb: 16
+    notes: "Strong multilingual coverage (useful across 25 countries); permissive licence. Recommended default."
+  qwen3-8b:
+    hf_id: Qwen/Qwen3-8B
+    license: Apache-2.0
+    min_vram_gb: 18
+    notes: "Newer Qwen generation with hybrid thinking mode; permissive licence."
+  llama3.1-8b:
+    hf_id: meta-llama/Llama-3.1-8B-Instruct
+    license: Llama 3.1 Community License (gated - accept on Hugging Face)
+    min_vram_gb: 16
+    notes: "Widely used, strong English instruction following."
+  mistral-7b:
+    hf_id: mistralai/Mistral-7B-Instruct-v0.3
+    license: Apache-2.0
+    min_vram_gb: 16
+    notes: "Efficient 7B model; good European-language coverage."
+  gemma2-9b:
+    hf_id: google/gemma-2-9b-it
+    license: Gemma Terms of Use (gated)
+    min_vram_gb: 20
+    notes: "High quality for size; no system role (system prompt is merged into the first user turn automatically)."
+  phi3.5-mini:
+    hf_id: microsoft/Phi-3.5-mini-instruct
+    license: MIT
+    min_vram_gb: 10
+    notes: "3.8B - fits consumer GPUs and laptops."
+  qwen2.5-0.5b:
+    hf_id: Qwen/Qwen2.5-0.5B-Instruct
+    license: Apache-2.0
+    min_vram_gb: 0
+    notes: "Tiny model for CPU smoke tests of the pipeline only - not for real advice."

@@ -1,0 +1,16 @@
+{
+  "country": "united_states",
+  "age": 54,
+  "sex": "male",
+  "weight_kg": 98,
+  "height_cm": 178,
+  "activity_level": "sedentary",
+  "life_stage": "none",
+  "dietary_pattern": "omnivore",
+  "medical_conditions": ["type2_diabetes", "hypertension"],
+  "allergies": ["peanut"],
+  "goal": "weight_loss",
+  "budget": "medium",
+  "climate": "temperate",
+  "lifestyle": ["shift_work"]
+}

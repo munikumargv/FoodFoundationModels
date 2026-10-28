@@ -1,0 +1,22 @@
+# QLoRA fine-tuning hyper-parameters (overridable from the CLI).
+dataset_path: data/train.jsonl
+eval_path: data/eval.jsonl
+output_dir: outputs/foodfm-lora
+
+max_seq_length: 2048
+num_train_epochs: 3
+learning_rate: 2.0e-4
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 8
+warmup_ratio: 0.03
+lr_scheduler_type: cosine
+logging_steps: 10
+save_steps: 200
+seed: 42
+
+load_in_4bit: true      # set false on CPU / Apple Silicon (bitsandbytes needs CUDA)
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: all-linear   # works across Llama/Qwen/Mistral/Gemma/Phi layer names

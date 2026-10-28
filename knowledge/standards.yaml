@@ -1,0 +1,240 @@
+# Nutrition reference standards used to ground the model.
+#
+# Primary sources:
+#   WHO   - World Health Organization healthy diet fact sheet & guidelines
+#           (sugars 2015, sodium/potassium 2012, fats & carbohydrates 2023)
+#   NASEM - US National Academies Dietary Reference Intakes (RDA / AI / AMDR / CDRR)
+#   FAO/WHO/UNU - Human energy requirements (2004), Schofield BMR equations (1985)
+#   ESPEN / PROT-AGE - protein for older adults
+#
+# Values are for healthy individuals. They are population reference values,
+# not clinical prescriptions. Re-verify against the latest editions before
+# production use (see `last_reviewed`).
+
+last_reviewed: "2026-10"
+
+who_population_goals:
+  - id: free_sugars
+    text: "Free sugars below 10% of total energy intake, with further benefit below 5% (about 25 g/day for an adult)."
+    source: "WHO Guideline: Sugars intake for adults and children (2015)"
+  - id: sodium
+    text: "Sodium below 2000 mg/day (salt below 5 g/day) for adults; adjust downward for children aged 2-15 according to their energy needs. Use iodized salt."
+    source: "WHO Guideline: Sodium intake for adults and children (2012)"
+  - id: potassium
+    text: "Potassium at least 3510 mg/day for adults, mainly from fruits, vegetables, legumes and nuts."
+    source: "WHO Guideline: Potassium intake for adults and children (2012)"
+  - id: total_fat
+    text: "Total fat not more than 30% of total energy; saturated fat below 10%; trans fat below 1%. Prefer unsaturated fats (vegetable oils, nuts, fish)."
+    source: "WHO Guideline: Saturated fatty acid and trans-fatty acid intake (2023)"
+  - id: fruit_veg
+    text: "At least 400 g (5 portions) of fruits and vegetables per day, excluding starchy roots such as potatoes and cassava."
+    source: "WHO Healthy diet fact sheet"
+  - id: fibre
+    text: "Naturally occurring dietary fibre of at least 25 g/day for adults and children 10+, 21 g/day for ages 6-9, and 15 g/day for ages 2-5, from whole grains, vegetables, fruits and pulses."
+    source: "WHO Guideline: Carbohydrate intake for adults and children (2023)"
+  - id: breastfeeding
+    text: "Exclusive breastfeeding for the first 6 months, then safe and adequate complementary foods with continued breastfeeding up to 2 years or beyond. Do not add salt or sugar to complementary foods."
+    source: "WHO/UNICEF Infant and young child feeding guidance"
+  - id: physical_activity
+    text: "Adults: 150-300 minutes of moderate or 75-150 minutes of vigorous activity per week plus muscle strengthening on 2+ days. Children 5-17: an average of 60 minutes per day of moderate-to-vigorous activity."
+    source: "WHO Guidelines on physical activity and sedentary behaviour (2020)"
+
+# Acceptable Macronutrient Distribution Ranges (% of energy), NASEM.
+amdr:
+  "1-3":   {protein: [5, 20],  fat: [30, 40], carbohydrate: [45, 65]}
+  "4-18":  {protein: [10, 30], fat: [25, 35], carbohydrate: [45, 65]}
+  "19+":   {protein: [10, 35], fat: [20, 35], carbohydrate: [45, 65]}
+
+# Protein RDA in g per kg body weight per day (NASEM), plus older-adult guidance.
+protein_g_per_kg:
+  "1-3": 1.05
+  "4-13": 0.95
+  "14-18": 0.85
+  "19-64": 0.8
+  "65+": 1.0          # PROT-AGE / ESPEN: 1.0-1.2 g/kg healthy older adults; 1.2-1.5 with acute/chronic illness
+  pregnancy: 1.1
+  lactation: 1.3
+protein_infant_g_per_day:   # NASEM AI (absolute grams)
+  "0-6 months": 9.1
+  "7-12 months": 11
+
+# Micronutrient reference values (RDA unless marked AI). Keys are life-stage
+# groups; "M"/"F" split where values differ by sex.
+micronutrients:
+  calcium_mg:
+    unit: mg
+    source: "NASEM DRI (2011)"
+    values:
+      "0-6 months": 200      # AI
+      "7-12 months": 260     # AI
+      "1-3": 700
+      "4-8": 1000
+      "9-13": 1300
+      "14-18": 1300
+      "19-50": 1000
+      "51-70": {M: 1000, F: 1200}
+      "71+": 1200
+      pregnancy: 1000        # 1300 if aged 14-18
+      lactation: 1000        # 1300 if aged 14-18
+  iron_mg:
+    unit: mg
+    source: "NASEM DRI (2001). Vegetarians need ~1.8x due to lower bioavailability of non-haem iron."
+    values:
+      "0-6 months": 0.27     # AI
+      "7-12 months": 11
+      "1-3": 7
+      "4-8": 10
+      "9-13": 8
+      "14-18": {M: 11, F: 15}
+      "19-50": {M: 8, F: 18}
+      "51-70": 8
+      "71+": 8
+      pregnancy: 27
+      lactation: 9
+  vitamin_d_iu:
+    unit: IU
+    source: "NASEM DRI (2011); 40 IU = 1 microgram"
+    values:
+      "0-6 months": 400      # AI
+      "7-12 months": 400     # AI
+      "1-3": 600
+      "4-8": 600
+      "9-13": 600
+      "14-18": 600
+      "19-50": 600
+      "51-70": 600
+      "71+": 800
+      pregnancy: 600
+      lactation: 600
+  vitamin_b12_mcg:
+    unit: mcg
+    source: "NASEM DRI (1998). Vegans need fortified foods or supplements."
+    values:
+      "0-6 months": 0.4
+      "7-12 months": 0.5
+      "1-3": 0.9
+      "4-8": 1.2
+      "9-13": 1.8
+      "14-18": 2.4
+      "19-50": 2.4
+      "51-70": 2.4           # adults 51+ should obtain most from fortified foods/supplements
+      "71+": 2.4
+      pregnancy: 2.6
+      lactation: 2.8
+  folate_mcg_dfe:
+    unit: mcg DFE
+    source: "NASEM DRI (1998). Women who could become pregnant: 400 mcg folic acid daily from supplements/fortified foods."
+    values:
+      "0-6 months": 65
+      "7-12 months": 80
+      "1-3": 150
+      "4-8": 200
+      "9-13": 300
+      "14-18": 400
+      "19-50": 400
+      "51-70": 400
+      "71+": 400
+      pregnancy: 600
+      lactation: 500
+  zinc_mg:
+    unit: mg
+    source: "NASEM DRI (2001)"
+    values:
+      "0-6 months": 2
+      "7-12 months": 3
+      "1-3": 3
+      "4-8": 5
+      "9-13": 8
+      "14-18": {M: 11, F: 9}
+      "19-50": {M: 11, F: 8}
+      "51-70": {M: 11, F: 8}
+      "71+": {M: 11, F: 8}
+      pregnancy: 11
+      lactation: 12
+  iodine_mcg:
+    unit: mcg
+    source: "NASEM DRI (2001); WHO recommends 250 mcg in pregnancy and lactation"
+    values:
+      "0-6 months": 110
+      "7-12 months": 130
+      "1-3": 90
+      "4-8": 90
+      "9-13": 120
+      "14-18": 150
+      "19-50": 150
+      "51-70": 150
+      "71+": 150
+      pregnancy: 220
+      lactation: 290
+  vitamin_a_mcg_rae:
+    unit: mcg RAE
+    source: "NASEM DRI (2001)"
+    values:
+      "0-6 months": 400
+      "7-12 months": 500
+      "1-3": 300
+      "4-8": 400
+      "9-13": 600
+      "14-18": {M: 900, F: 700}
+      "19-50": {M: 900, F: 700}
+      "51-70": {M: 900, F: 700}
+      "71+": {M: 900, F: 700}
+      pregnancy: 770
+      lactation: 1300
+  vitamin_c_mg:
+    unit: mg
+    source: "NASEM DRI (2000). Smokers need +35 mg/day."
+    values:
+      "0-6 months": 40
+      "7-12 months": 50
+      "1-3": 15
+      "4-8": 25
+      "9-13": 45
+      "14-18": {M: 75, F: 65}
+      "19-50": {M: 90, F: 75}
+      "51-70": {M: 90, F: 75}
+      "71+": {M: 90, F: 75}
+      pregnancy: 85
+      lactation: 120
+  fibre_g:
+    unit: g
+    source: "NASEM AI (14 g per 1000 kcal); WHO minimum 25 g/day adults"
+    values:
+      "1-3": 19
+      "4-8": 25
+      "9-13": {M: 31, F: 26}
+      "14-18": {M: 38, F: 26}
+      "19-50": {M: 38, F: 25}
+      "51-70": {M: 30, F: 21}
+      "71+": {M: 30, F: 21}
+      pregnancy: 28
+      lactation: 29
+  water_l:
+    unit: L
+    source: "NASEM AI (2004); increase in heat and with physical activity"
+    values:
+      "1-3": 1.3
+      "4-8": 1.7
+      "9-13": {M: 2.4, F: 2.1}
+      "14-18": {M: 3.3, F: 2.3}
+      "19-50": {M: 3.7, F: 2.7}
+      "51-70": {M: 3.7, F: 2.7}
+      "71+": {M: 3.7, F: 2.7}
+      pregnancy: 3.0
+      lactation: 3.8
+
+# Energy requirement methodology.
+energy:
+  adult_bmr_equation: "Mifflin-St Jeor: 10*kg + 6.25*cm - 5*age + 5 (male) or - 161 (female)"
+  child_bmr_equation: "FAO/WHO/UNU (Schofield, 1985) weight-based equations for ages 3-17"
+  physical_activity_levels:     # PAL multipliers applied to BMR (FAO/WHO/UNU 2004 bands)
+    sedentary: 1.40
+    light: 1.55
+    moderate: 1.75
+    vigorous: 2.00
+  pregnancy_extra_kcal:         # NASEM
+    trimester_1: 0
+    trimester_2: 340
+    trimester_3: 452
+  lactation_extra_kcal: 330     # first 6 months (500 kcal minus 170 kcal from maternal stores)
+  weight_change_note: "A deficit of about 500 kcal/day yields roughly 0.5 kg/week loss. Do not go below ~1200 kcal/day (women) or ~1500 kcal/day (men) without clinical supervision; no deficits for children, pregnancy or lactation."

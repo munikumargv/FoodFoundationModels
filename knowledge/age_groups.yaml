@@ -1,0 +1,114 @@
+# Life-stage groups and the nutrition considerations specific to each.
+# `min_age`/`max_age` in years (inclusive min, exclusive max).
+
+last_reviewed: "2026-10"
+
+age_groups:
+  - id: infant
+    label: "Infant (0-12 months)"
+    min_age: 0
+    max_age: 1
+    priorities:
+      - "Exclusive breastfeeding for 6 months; infant formula only when breastfeeding is not possible."
+      - "Start iron-rich complementary foods at about 6 months (mashed legumes, meat, fish, egg, iron-fortified cereal)."
+      - "No added salt, sugar or honey (botulism risk under 12 months); no cow's milk as main drink before 12 months."
+      - "Vitamin D 400 IU/day supplement for breastfed infants in many guidelines."
+    risks: ["iron deficiency after 6 months", "choking on whole nuts, grapes and hard foods", "allergen introduction timing"]
+    defer_to: "paediatrician or child health nurse"
+
+  - id: toddler
+    label: "Toddler (1-3 years)"
+    min_age: 1
+    max_age: 4
+    priorities:
+      - "Three meals and 2-3 snacks; offer a variety of textures and family foods."
+      - "Whole milk/dairy or fortified alternatives (~2 servings) for calcium; limit milk to ~500 ml so it doesn't displace iron-rich foods."
+      - "Fat should provide 30-40% of energy to support brain growth."
+      - "Avoid sugary drinks and ultra-processed snacks; water as the default drink."
+    risks: ["picky eating", "iron-deficiency anaemia", "stunting in food-insecure settings"]
+    defer_to: "paediatrician"
+
+  - id: child
+    label: "Child (4-8 years)"
+    min_age: 4
+    max_age: 9
+    priorities:
+      - "Regular meals with fruits, vegetables, whole grains, protein foods and dairy/alternatives."
+      - "Healthy school lunches and limited sugary drinks; 60 minutes of daily active play."
+      - "Calcium 1000 mg/day and vitamin D 600 IU/day for bone growth."
+    risks: ["childhood overweight", "dental caries from sugars", "micronutrient gaps"]
+    defer_to: "paediatrician"
+
+  - id: preteen
+    label: "Pre-adolescent (9-13 years)"
+    min_age: 9
+    max_age: 14
+    priorities:
+      - "Growth spurt: calcium needs rise to 1300 mg/day."
+      - "Iron needs increase, especially for girls approaching menarche."
+      - "Build habits: breakfast, family meals, limited screen-time snacking."
+    risks: ["low calcium intake", "energy drinks and caffeine", "early dieting"]
+    defer_to: "paediatrician"
+
+  - id: adolescent
+    label: "Adolescent (14-18 years)"
+    min_age: 14
+    max_age: 19
+    priorities:
+      - "Peak bone mass: 1300 mg calcium and 600 IU vitamin D daily."
+      - "Girls need 15 mg iron/day (menstrual losses); boys 11 mg."
+      - "High energy needs for athletes; emphasise whole foods over supplements."
+      - "Screen for disordered eating; avoid restrictive diets."
+    risks: ["iron deficiency (girls)", "eating disorders", "fast-food and sugary-drink heavy diets"]
+    defer_to: "paediatrician or adolescent medicine specialist"
+
+  - id: young_adult
+    label: "Adult (19-50 years)"
+    min_age: 19
+    max_age: 51
+    priorities:
+      - "Balanced plate: half vegetables and fruit, a quarter whole grains, a quarter protein foods."
+      - "Women of reproductive age: 18 mg iron and 400 mcg folic acid daily."
+      - "Keep sodium <2000 mg (WHO) and free sugars <10% of energy."
+    risks: ["weight gain", "hypertension", "type 2 diabetes onset", "anaemia in women"]
+    defer_to: "registered dietitian / primary-care physician for medical conditions"
+
+  - id: middle_adult
+    label: "Older adult (51-70 years)"
+    min_age: 51
+    max_age: 71
+    priorities:
+      - "Women 51+: calcium rises to 1200 mg/day (post-menopause bone loss); iron falls to 8 mg."
+      - "Vitamin B12 absorption declines: include fortified foods or supplements."
+      - "Prioritise fibre, potassium and limited sodium for cardiometabolic health."
+      - "Maintain muscle: protein 1.0-1.2 g/kg/day and resistance exercise."
+    risks: ["sarcopenia onset", "osteoporosis", "cardiovascular disease", "type 2 diabetes"]
+    defer_to: "primary-care physician"
+
+  - id: elderly
+    label: "Elderly (71+ years)"
+    min_age: 71
+    max_age: 130
+    priorities:
+      - "Vitamin D 800 IU/day and calcium 1200 mg/day to reduce fracture risk."
+      - "Protein 1.0-1.2 g/kg/day (1.2-1.5 with illness) spread across meals to prevent sarcopenia."
+      - "Energy needs fall but micronutrient needs do not: nutrient-dense foods."
+      - "Thirst sensation declines: schedule fluids."
+      - "Adapt textures for chewing/swallowing difficulties; watch for unintended weight loss."
+    risks: ["malnutrition", "dehydration", "sarcopenia and falls", "drug-nutrient interactions"]
+    defer_to: "geriatrician or dietitian"
+
+special_life_stages:
+  pregnancy:
+    priorities:
+      - "Folic acid 400 mcg/day from before conception through week 12 (600 mcg DFE total folate)."
+      - "Iron 27 mg/day; iodine 220-250 mcg/day; choline and DHA (2 servings of low-mercury fish weekly)."
+      - "No extra energy in trimester 1; about +340 kcal (T2) and +452 kcal (T3)."
+      - "Avoid alcohol, raw/undercooked meat, eggs and fish, unpasteurised dairy, high-mercury fish; limit caffeine to 200 mg/day."
+    defer_to: "obstetrician or midwife"
+  lactation:
+    priorities:
+      - "About +330 kcal/day in the first 6 months; extra fluids."
+      - "Iodine 290 mcg (NASEM) / 250 mcg (WHO); vitamin A 1300 mcg RAE; continue B12 and DHA."
+      - "Alcohol avoidance; caffeine in moderation."
+    defer_to: "obstetrician, midwife or lactation consultant"
