@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FoodFM Nutrition Planner</title>
+<meta name="description" content="Standards-based nutrition recommendations adapted to country food habits, age and personal factors.">
+<style>
+  :root {
+    --bg: #f7f7f4; --surface: #ffffff; --text: #1d1d1b; --muted: #5f5f5a; --border: #dcdcd5;
+    --accent: #2f6f4f; --accent-text: #ffffff; --warn-bg: #fff6e0; --warn-border: #e7c56b; --error: #b3261e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161715; --surface: #1f201e; --text: #ecece6; --muted: #a5a59d; --border: #3a3b37;
+      --accent: #6fbf8f; --accent-text: #0e1a13; --warn-bg: #2d2714; --warn-border: #7a6526; --error: #f2948c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161715; --surface: #1f201e; --text: #ecece6; --muted: #a5a59d; --border: #3a3b37;
+    --accent: #6fbf8f; --accent-text: #0e1a13; --warn-bg: #2d2714; --warn-border: #7a6526; --error: #f2948c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 16px; }
+  .notice { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 8px; padding: 10px 14px; font-size: .9rem; margin-bottom: 20px; }
+  form, .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  fieldset { border: 0; padding: 0; margin: 0 0 18px; }
+  legend { font-weight: 600; margin-bottom: 8px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px 16px; }
+  label { display: flex; flex-direction: column; gap: 4px; font-size: .9rem; color: var(--muted); }
+  input, select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px; min-width: 0; }
+  .row { display: flex; gap: 8px; }
+  .row > * { flex: 1; }
+  .checks { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+  .checks label { flex-direction: row; align-items: center; gap: 6px; color: var(--text); }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  button { font: inherit; border: 0; border-radius: 6px; padding: 10px 18px; background: var(--accent); color: var(--accent-text); cursor: pointer; font-weight: 600; }
+  button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  button:disabled { opacity: .5; cursor: wait; }
+  .hidden { display: none !important; }
+  #status { color: var(--muted); font-size: .9rem; }
+  #errors { color: var(--error); }
+  #result { margin-top: 20px; }
+  #plan ul { padding-left: 20px; margin: 4px 0 12px; }
+  #plan p { margin: 12px 0 4px; }
+  pre { white-space: pre-wrap; word-break: break-word; font-size: .8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+  footer { color: var(--muted); font-size: .8rem; margin-top: 24px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>FoodFM Nutrition Planner</h1>
+  <p class="sub">Standards-based nutrition recommendations (WHO, NASEM, national dietary guidelines) adapted to the food habits of the 25 most populous countries, age and personal factors.</p>
+  <div class="notice">General information only, not medical advice. Everything runs in your browser and nothing you enter is sent anywhere. This page uses the built-in grounded engine; the fine-tuned LLM runs locally (see the <a href="https://github.com/munikumargv/FoodFoundationModels">README</a>).</div>
+
+  <form id="form">
+    <fieldset>
+      <legend>About the person</legend>
+      <div class="grid">
+        <label>Country <select id="country" required></select></label>
+        <label>Age
+          <span class="row"><input id="age" type="number" min="0" max="129" step="0.1" required value="30"><select id="ageUnit"><option value="years">years</option><option value="months">months</option></select></span>
+        </label>
+        <label>Biological sex <select id="sex"><option value="female">female</option><option value="male">male</option></select></label>
+        <label>Weight (kg, optional) <input id="weight_kg" type="number" min="2" max="400" step="0.1"></label>
+        <label>Height (cm, optional) <input id="height_cm" type="number" min="40" max="250" step="0.1"></label>
+        <label id="life_stageWrap">Pregnancy / lactation <select id="life_stage"></select></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Lifestyle and preferences</legend>
+      <div class="grid" id="singles"></div>
+    </fieldset>
+    <fieldset id="multis"></fieldset>
+    <div class="actions">
+      <button id="submit" type="submit" disabled>Loading engine…</button>
+      <label class="checks"><label><input id="showPrompt" type="checkbox"> Show grounded LLM prompt</label></label>
+      <span id="status">Loading Python runtime (first visit takes a few seconds)…</span>
+    </div>
+    <p id="errors"></p>
+  </form>
+
+  <section id="result" class="card hidden" aria-live="polite">
+    <div id="plan"></div>
+    <div class="actions">
+      <button id="download" type="button" class="secondary">Download profile JSON</button>
+      <span id="cliHint" class="sub"></span>
+    </div>
+    <details id="promptWrap" class="hidden"><summary>Grounded prompt sent to the LLM</summary><pre id="prompt"></pre></details>
+  </section>
+
+  <footer>Knowledge base last reviewed: <span id="reviewed">–</span>. Source code and fine-tuning pipeline: <a href="https://github.com/munikumargv/FoodFoundationModels">FoodFoundationModels</a>.</footer>
+</main>
+
+<script>
+const PYODIDE_URL = new URLSearchParams(location.search).get("pyodide") || "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
+const SINGLE_LABELS = { activity_level: "Activity level", dietary_pattern: "Diet / religious practice", goal: "Goal", budget: "Budget", climate: "Climate" };
+const DEFAULTS = { activity_level: "light", life_stage: "none", dietary_pattern: "omnivore", goal: "maintain_health", budget: "medium", climate: "temperate" };
+const MULTIS = ["medical_conditions", "allergies", "lifestyle"];
+const $ = (id) => document.getElementById(id);
+const human = (s) => s.replace(/_/g, " ");
+let py, api, lastProfile;
+
+function fillSelect(sel, values, def) {
+  sel.innerHTML = "";
+  for (const v of values) {
+    const o = document.createElement("option");
+    o.value = typeof v === "string" ? v : v.id;
+    o.textContent = typeof v === "string" ? human(v) : v.name;
+    if (o.value === def) o.selected = true;
+    sel.appendChild(o);
+  }
+}
+
+function buildForm(opts) {
+  fillSelect($("country"), opts.countries, "india");
+  fillSelect($("life_stage"), opts.factors.life_stage.options, "none");
+  for (const [name, label] of Object.entries(SINGLE_LABELS)) {
+    const wrap = document.createElement("label");
+    wrap.id = name + "Wrap";
+    wrap.textContent = label + " ";
+    const sel = document.createElement("select");
+    sel.id = name;
+    fillSelect(sel, opts.factors[name].options, DEFAULTS[name]);
+    wrap.appendChild(sel);
+    $("singles").appendChild(wrap);
+  }
+  for (const name of MULTIS) {
+    const fs = document.createElement("div");
+    fs.id = name + "Wrap";
+    fs.style.marginBottom = "14px";
+    fs.innerHTML = `<div style="font-weight:600;margin-bottom:6px">${opts.factors[name].question}</div>`;
+    const box = document.createElement("div");
+    box.className = "checks";
+    for (const v of opts.factors[name].options) {
+      const l = document.createElement("label");
+      l.innerHTML = `<input type="checkbox" name="${name}" value="${v}"> ${human(v)}`;
+      box.appendChild(l);
+    }
+    fs.appendChild(box);
+    $("multis").appendChild(fs);
+  }
+  $("reviewed").textContent = opts.last_reviewed;
+  for (const id of ["age", "ageUnit", "sex"]) $(id).addEventListener("input", applyVisibility);
+  applyVisibility();
+}
+
+function ageYears() {
+  const v = parseFloat($("age").value);
+  return $("ageUnit").value === "months" ? Math.round((v / 12) * 100) / 100 : v;
+}
+
+// Mirror the CLI: hide questions that do not apply to this age/sex.
+function applyVisibility() {
+  const age = ageYears();
+  const show = (id, on) => $(id).classList.toggle("hidden", !on);
+  show("life_stageWrap", $("sex").value === "female" && age >= 12 && age <= 55);
+  show("activity_levelWrap", age >= 2);
+  show("dietary_patternWrap", age >= 2);
+  show("goalWrap", age >= 18);
+  show("medical_conditionsWrap", age >= 1);
+  show("lifestyleWrap", age >= 18);
+}
+
+function collectProfile() {
+  const age = ageYears();
+  const visible = (id) => !$(id + "Wrap").classList.contains("hidden");
+  const val = (id) => (visible(id) ? $(id).value : DEFAULTS[id]);
+  const num = (id) => ($(id).value === "" ? null : parseFloat($(id).value));
+  const multi = (name) => visible(name) ? [...document.querySelectorAll(`input[name="${name}"]:checked`)].map((c) => c.value) : [];
+  return {
+    country: $("country").value, age, sex: $("sex").value, weight_kg: num("weight_kg"), height_cm: num("height_cm"),
+    activity_level: val("activity_level"), life_stage: visible("life_stage") ? $("life_stage").value : "none",
+    dietary_pattern: val("dietary_pattern"), medical_conditions: multi("medical_conditions"), allergies: multi("allergies"),
+    goal: val("goal"), budget: $("budget").value, climate: $("climate").value, lifestyle: multi("lifestyle"),
+  };
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+// The plan uses a tiny Markdown subset: **bold**, "- " bullets and blank lines.
+function renderMarkdown(md) {
+  const html = [];
+  let inList = false;
+  for (const raw of md.split("\n")) {
+    const line = escapeHtml(raw).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    if (raw.startsWith("- ")) {
+      if (!inList) { html.push("<ul>"); inList = true; }
+      html.push(`<li>${line.slice(2)}</li>`);
+    } else {
+      if (inList) { html.push("</ul>"); inList = false; }
+      if (raw.trim()) html.push(`<p>${line}</p>`);
+    }
+  }
+  if (inList) html.push("</ul>");
+  return html.join("");
+}
+
+async function boot() {
+  try {
+    const script = document.createElement("script");
+    script.src = PYODIDE_URL + "pyodide.js";
+    await new Promise((ok, fail) => { script.onload = ok; script.onerror = () => fail(new Error("could not load Pyodide")); document.head.appendChild(script); });
+    py = await loadPyodide({ indexURL: PYODIDE_URL });
+    const bundle = await (await fetch("foodfm_bundle.zip")).arrayBuffer();
+    py.unpackArchive(bundle, "zip", { extractDir: "/home/pyodide/app" });
+    py.runPython(`
+import os, sys
+sys.path.insert(0, "/home/pyodide/app")
+sys.path.insert(0, "/home/pyodide/app/src")
+os.environ["FOODFM_KNOWLEDGE_DIR"] = "/home/pyodide/app/knowledge"
+os.environ["FOODFM_CONFIG_DIR"] = "/home/pyodide/app/configs"
+`);
+    api = py.pyimport("web_api");
+    buildForm(JSON.parse(api.options()));
+    $("submit").disabled = false;
+    $("submit").textContent = "Get my nutrition plan";
+    $("status").textContent = "";
+  } catch (e) {
+    $("status").textContent = "Failed to load the engine: " + e.message;
+  }
+}
+
+$("form").addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  $("errors").textContent = "";
+  const profile = collectProfile();
+  if (Number.isNaN(profile.age)) { $("errors").textContent = "Please enter an age."; return; }
+  const res = JSON.parse(api.recommend(JSON.stringify(profile), $("showPrompt").checked));
+  if (res.errors) { $("errors").textContent = res.errors.join("; "); return; }
+  lastProfile = res.profile;
+  $("plan").innerHTML = renderMarkdown(res.plan);
+  $("promptWrap").classList.toggle("hidden", !res.prompt);
+  $("prompt").textContent = res.prompt || "";
+  $("cliHint").textContent = "Reuse locally: foodfm recommend --profile profile.json";
+  $("result").classList.remove("hidden");
+  $("result").scrollIntoView({ behavior: "smooth" });
+});
+
+$("download").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(lastProfile, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "profile.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+boot();
+</script>
+</body>
+</html>

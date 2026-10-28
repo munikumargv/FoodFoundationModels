@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from .calculators import build_targets
@@ -200,7 +201,9 @@ def render_plan(p: Profile, kb: KnowledgeBase) -> str:
     adjustments, safety = _factor_notes(p, kb)
     out: list[str] = []
 
-    who = f"a {p.age:g}-year-old {p.sex}" if p.age >= 1 else f"a {round(p.age * 12)}-month-old infant"
+    who = f"{p.age:g}-year-old {p.sex}" if p.age >= 1 else f"{round(p.age * 12)}-month-old infant"
+    # "an 8-month-old", "an 11-year-old", "an 18-year-old", "an 80-year-old"
+    who = ("an " if re.match(r"(8|11|18)\b|8\d\b", who) else "a ") + who
     stage = {"pregnant_t1": " in the first trimester of pregnancy", "pregnant_t2": " in the second trimester of pregnancy",
              "pregnant_t3": " in the third trimester of pregnancy", "lactating": " who is breastfeeding"}.get(p.life_stage, "")
     out.append(f"**Nutrition plan for {who}{stage} in {c['name']}** ({g['label']})\n")

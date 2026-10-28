@@ -136,14 +136,41 @@ After editing, run `pytest` (it checks completeness and catches YAML pitfalls), 
 retrain. Changes to the knowledge base reach the built-in engine and retrieval right away; the fine-tuned
 weights pick them up after retraining.
 
+## Deploying on GitHub
+
+| What | How | Workflow |
+|---|---|---|
+| Tests on every push and pull request | GitHub Actions on Python 3.10, 3.12 and 3.13: pytest, dataset build, example profiles | `.github/workflows/ci.yml` |
+| Public web planner | GitHub Pages: the questionnaire and the built-in grounded engine run **in the visitor's browser** through Pyodide, so no server is needed and nothing entered leaves the device | `.github/workflows/pages.yml` |
+
+One-time setup for the web planner: in the repository go to **Settings → Pages → Build and deployment → Source**
+and pick **GitHub Actions**. After that, every push to the default branch that touches the engine, knowledge
+or web page redeploys it to `https://<user>.github.io/FoodFoundationModels/`. You can also run the workflow by
+hand from the **Actions** tab.
+
+To preview the site locally:
+
+```bash
+python scripts/build_site.py && python -m http.server -d _site 8000
+```
+
+GitHub Pages only serves static files, so the **fine-tuned LLM can't run there**. To host the model as well:
+
+- **Weights**: push the LoRA adapter (`outputs/foodfm-lora`, tens of MB) to the Hugging Face Hub, or attach it
+  to a GitHub Release. Don't commit it to git.
+- **Model serving**: a GPU host such as a Hugging Face Space, a vLLM server or a cloud VM running
+  `foodfm chat`, behind an API.
+
 ## Project layout
 
 ```
+.github/      CI and GitHub Pages workflows
 configs/      models.yaml (selectable open models), train.yaml (QLoRA hyper-parameters)
 knowledge/    curated nutrition knowledge base (YAML)
 examples/     sample profiles
 src/foodfm/   knowledge, profile, calculators, retrieval, grounding, dataset, chat_format, train, infer, evaluate, cli
-scripts/      smoke_train_tiny.py: offline end-to-end check of train + infer with a tiny random model
+web/          static planner page (index.html) and its Python bridge (web_api.py)
+scripts/      build_site.py (Pages bundle), smoke_train_tiny.py (offline train + infer check with a tiny random model)
 tests/        pytest suite
 ```
 
