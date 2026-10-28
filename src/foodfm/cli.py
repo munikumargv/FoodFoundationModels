@@ -8,6 +8,8 @@
     foodfm train --model qwen2.5-7b
     foodfm evaluate --adapter outputs/foodfm-lora
     foodfm models
+    foodfm analyze --persona priya            # nutrition gap analysis (demo persona)
+    foodfm analyze --input meals.json --labs report.txt
 """
 
 from __future__ import annotations
@@ -256,6 +258,40 @@ def cmd_build_dataset(a: argparse.Namespace, say: Callable[[str], None] = print)
     say("By kind: " + ", ".join(f"{k}={v}" for k, v in sorted(Counter(e["kind"] for e in train).items())))
 
 
+def cmd_analyze(a: argparse.Namespace, kb: KnowledgeBase, say: Callable[[str], None] = print) -> dict[str, Any]:
+    from .gaps import analyze
+
+    if a.persona:
+        data = next((x for x in kb.personas if x["id"] == a.persona), None)
+        if data is None:
+            raise SystemExit(f"Unknown persona {a.persona!r}; choose from {[x['id'] for x in kb.personas]}")
+        data = {**data, "lab_text": data.get("lab_report", "")}
+    else:
+        data = json.loads(Path(a.input).read_text(encoding="utf-8"))
+    lab_text = Path(a.labs).read_text(encoding="utf-8") if a.labs else data.get("lab_text", "")
+    r = analyze(Profile.from_dict(data["profile"]), data["meals"], kb, lab_text=lab_text, lab_values=data.get("lab_values"))
+    if a.json:
+        say(json.dumps(r, indent=2, ensure_ascii=False))
+        return r
+
+    say(f"\nNutrition score: {r['score']}/100  ({r['country']['name']}, energy {r['energy']['intake']} / {r['energy']['target']} kcal)")
+    say("\nNUTRITION GAPS (vs RDA)")
+    for row in r["gaps"]:
+        lab = f"  [lab: {row['lab_label']} {row['lab_value']:g} {row['lab_unit']} - {row['lab_status']}]" if row.get("lab_label") else ""
+        say(f"  {row['status'].upper():<10} {row['label']:<12} {row['intake']:>7g} / {row['target']:g} {row['unit']} ({row['pct']:.0f}%){lab}")
+    for row in r["excesses"]:
+        say(f"  {row['status'].upper():<10} {row['label']:<12} {row['intake']:>7g} / limit {row['target']:g} {row['unit']} ({row['pct']:.0f}%)")
+    say("\nSUPPLEMENTS REQUIRED")
+    for s in r["supplements"] or [{"name": "None needed", "priority": "-", "dose": "", "reasons": []}]:
+        say(f"  [{s['priority']}] {s['name']}: {s['dose']}" + (f"  <- {'; '.join(s['reasons'])}" if s["reasons"] else ""))
+    say(f"\nFOODS FROM {r['country']['name'].upper()} TO ADD")
+    for f in r["food_recommendations"]:
+        boosts = ", ".join(f"+{b['amount']:g} {b['unit']} {b['label']} ({b['pct_rda']}%)" for b in f["boosts"])
+        say(f"  {f['name']} ({f['serving']}): {boosts}")
+    say("\n" + r["disclaimer"])
+    return r
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(prog="foodfm", description="Nutrition-grounded open LLM toolkit")
     sub = ap.add_subparsers(dest="cmd")
@@ -283,6 +319,13 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("evaluate", help="evaluate a model (see `foodfm evaluate -h`)", add_help=False)
     sub.add_parser("models", help="list available open models")
 
+    g = sub.add_parser("analyze", help="nutrition gap analysis from meals (+ optional lab report)")
+    src = g.add_mutually_exclusive_group(required=True)
+    src.add_argument("--persona", help="demo persona id (priya, james, amara, hiroshi)")
+    src.add_argument("--input", help='JSON file: {"profile": {...}, "meals": [...], "lab_text": "..."}')
+    g.add_argument("--labs", help="lab report text/CSV file (overrides lab_text)")
+    g.add_argument("--json", action="store_true", help="print the full report as JSON")
+
     argv = sys.argv[1:] if argv is None else argv
     # Delegate train/evaluate argument parsing to their modules.
     if argv and argv[0] == "train":
@@ -299,6 +342,8 @@ def main(argv: list[str] | None = None) -> None:
     pr = Prompter()
     if a.cmd is None:
         main_menu(pr, kb)
+    elif a.cmd == "analyze":
+        cmd_analyze(a, kb)
     elif a.cmd == "models":
         show_models(kb)
     elif a.cmd == "build-dataset":

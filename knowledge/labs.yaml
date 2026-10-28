@@ -1,0 +1,224 @@
+# Lab markers used to confirm or upgrade diet-based nutrition gaps.
+#
+# Cut-offs are common adult screening thresholds (WHO, IOM/NASEM, Endocrine
+# Society, ADA, NCEP). Labs and guidelines differ; the report always shows the
+# person's own value and asks them to confirm with their doctor.
+#
+#   aliases:  names matched when parsing an uploaded report (case-insensitive)
+#   unit:     canonical unit; `convert` maps other units to it (multiply factor)
+#   nutrient: the dietary nutrient the marker reflects (links to the gap analysis)
+#   bands:    evaluated top to bottom; first matching `below`/`at_least` wins.
+#             sex-specific bands use `F`/`M` keys.
+
+last_reviewed: "2026-10"
+
+markers:
+  hemoglobin:
+    label: Haemoglobin
+    aliases: [hemoglobin, haemoglobin, hb, hgb]
+    unit: g/dL
+    convert: {"g/l": 0.1}
+    nutrient: iron
+    bands:
+      - {status: deficient, below: {F: 12.0, M: 13.0, pregnant: 11.0}, note: "Anaemia (WHO cut-off). Commonly caused by iron deficiency; B12/folate deficiency are other causes."}
+      - {status: adequate, note: "Within the normal range."}
+  ferritin:
+    label: Ferritin
+    aliases: [ferritin, serum ferritin]
+    unit: ng/mL
+    convert: {"ug/l": 1, "µg/l": 1}
+    nutrient: iron
+    bands:
+      - {status: deficient, below: 15, note: "Depleted iron stores (WHO <15 ng/mL)."}
+      - {status: low, below: 30, note: "Low iron stores; iron deficiency is likely, especially with symptoms."}
+      - {status: excess, at_least: 300, note: "High ferritin - do NOT take iron unless a doctor confirms (inflammation, liver disease or iron overload)."}
+      - {status: adequate, note: "Adequate iron stores."}
+  vitamin_d:
+    label: Vitamin D (25-OH)
+    aliases: ["25-oh vitamin d", "25(oh)d", "25 hydroxy vitamin d", "vitamin d3", "vitamin d", "vit d"]
+    unit: ng/mL
+    convert: {"nmol/l": 0.4}
+    nutrient: vit_d
+    bands:
+      - {status: deficient, below: 20, note: "Vitamin D deficiency (<20 ng/mL)."}
+      - {status: low, below: 30, note: "Insufficient vitamin D (20-29 ng/mL, Endocrine Society)."}
+      - {status: excess, at_least: 100, note: "Very high - stop supplements and consult a doctor."}
+      - {status: adequate, note: "Sufficient vitamin D."}
+  vitamin_b12:
+    label: Vitamin B12
+    aliases: ["vitamin b12", "vit b12", "b12", cobalamin, cyanocobalamin]
+    unit: pg/mL
+    convert: {"pmol/l": 1.355}
+    nutrient: b12
+    bands:
+      - {status: deficient, below: 200, note: "B12 deficiency (<200 pg/mL)."}
+      - {status: low, below: 300, note: "Borderline B12; methylmalonic acid testing may help confirm."}
+      - {status: adequate, note: "Adequate B12."}
+  folate:
+    label: Folate (serum)
+    aliases: [folate, "folic acid", "serum folate"]
+    unit: ng/mL
+    convert: {"nmol/l": 0.441}
+    nutrient: folate
+    bands:
+      - {status: deficient, below: 4, note: "Low folate (<4 ng/mL)."}
+      - {status: adequate, note: "Adequate folate."}
+  zinc:
+    label: Zinc (serum)
+    aliases: [zinc, "serum zinc"]
+    unit: ug/dL
+    convert: {"umol/l": 6.54, "µmol/l": 6.54}
+    nutrient: zinc
+    bands:
+      - {status: deficient, below: 70, note: "Low serum zinc (<70 µg/dL)."}
+      - {status: adequate, note: "Adequate zinc."}
+  calcium:
+    label: Calcium (serum)
+    aliases: [calcium, "serum calcium"]
+    unit: mg/dL
+    convert: {"mmol/l": 4.008}
+    nutrient: null   # serum calcium is tightly regulated and does not reflect diet
+    bands:
+      - {status: low, below: 8.5, note: "Low serum calcium - needs medical review (often vitamin D or parathyroid related, not diet alone)."}
+      - {status: excess, at_least: 10.5, note: "High serum calcium - avoid calcium/vitamin D supplements until reviewed by a doctor."}
+      - {status: adequate, note: "Normal serum calcium (does not reflect dietary calcium)."}
+  albumin:
+    label: Albumin
+    aliases: [albumin, "serum albumin"]
+    unit: g/dL
+    convert: {"g/l": 0.1}
+    nutrient: protein
+    bands:
+      - {status: low, below: 3.5, note: "Low albumin - can reflect low protein intake, but also illness or liver/kidney disease."}
+      - {status: adequate, note: "Normal albumin."}
+  hba1c:
+    label: HbA1c
+    aliases: [hba1c, "a1c", "glycated hemoglobin", "glycosylated haemoglobin"]
+    unit: "%"
+    convert: {}
+    nutrient: free_sugar
+    bands:
+      - {status: excess, at_least: 6.5, note: "In the diabetes range - medical management needed; limit free sugars and refined starches."}
+      - {status: low, at_least: 5.7, note: "Prediabetes range - reduce free sugars and refined carbohydrates, increase fibre and activity."}
+      - {status: adequate, note: "Normal glycaemic control."}
+  fasting_glucose:
+    label: Fasting glucose
+    aliases: ["fasting glucose", "fasting blood sugar", "fbs", "fasting plasma glucose", "fpg"]
+    unit: mg/dL
+    convert: {"mmol/l": 18.0}
+    nutrient: free_sugar
+    bands:
+      - {status: excess, at_least: 126, note: "In the diabetes range - see a doctor."}
+      - {status: low, at_least: 100, note: "Impaired fasting glucose (prediabetes)."}
+      - {status: adequate, note: "Normal fasting glucose."}
+  ldl:
+    label: LDL cholesterol
+    aliases: ["ldl cholesterol", "ldl-c", "ldl"]
+    unit: mg/dL
+    convert: {"mmol/l": 38.67}
+    nutrient: sat_fat
+    bands:
+      - {status: excess, at_least: 160, note: "High LDL - reduce saturated/trans fat; medical review advised."}
+      - {status: low, at_least: 130, note: "Borderline-high LDL - limit saturated fat, add soluble fibre."}
+      - {status: adequate, note: "LDL within target for most adults."}
+  triglycerides:
+    label: Triglycerides
+    aliases: [triglycerides, tg, "triglyceride"]
+    unit: mg/dL
+    convert: {"mmol/l": 88.57}
+    nutrient: free_sugar
+    bands:
+      - {status: excess, at_least: 200, note: "High triglycerides - cut sugars, refined carbs and alcohol."}
+      - {status: low, at_least: 150, note: "Borderline-high triglycerides."}
+      - {status: adequate, note: "Normal triglycerides."}
+  tsh:
+    label: TSH
+    aliases: [tsh, "thyroid stimulating hormone"]
+    unit: mIU/L
+    convert: {"uiu/ml": 1, "µiu/ml": 1}
+    nutrient: null
+    bands:
+      - {status: excess, at_least: 4.5, note: "Raised TSH - possible hypothyroidism; iodine status and thyroid review by a doctor."}
+      - {status: low, below: 0.4, note: "Low TSH - thyroid review by a doctor; avoid iodine/kelp supplements."}
+      - {status: adequate, note: "Normal thyroid function."}
+
+# Supplement rules. A supplement is recommended when the lab marker is
+# deficient/low, OR the diet supplies less than `diet_trigger_pct` of the RDA,
+# OR an always-on condition applies (vegan B12, pregnancy folic acid, etc.).
+supplements:
+  iron:
+    name: Iron
+    form: "Ferrous sulfate / fumarate / bisglycinate"
+    dose: {deficient: "60 mg elemental iron daily or on alternate days", low: "30 mg elemental iron daily", diet: "Multivitamin with ~15-18 mg iron, or food-first if labs are normal"}
+    diet_trigger_pct: 60
+    always_if: {life_stage: [pregnant_t2, pregnant_t3]}
+    tips: ["Take with vitamin C (orange, guava, lemon); avoid tea/coffee and calcium within 2 hours.", "Alternate-day dosing improves absorption and tolerance."]
+    caution: "Do not take iron if ferritin is high or without confirming deficiency in men and post-menopausal women. Keep away from children (overdose risk)."
+  vit_d:
+    name: Vitamin D3
+    form: "Cholecalciferol"
+    dose: {deficient: "2000 IU daily (or doctor-led loading dose), recheck in 3 months", low: "1000-2000 IU daily", diet: "600-800 IU daily, especially with little sun exposure"}
+    diet_trigger_pct: 50
+    always_if: {age_min: 71}
+    tips: ["Take with a meal that contains fat.", "10-30 minutes of midday sun several times a week also helps (skin type dependent)."]
+    caution: "Do not exceed 4000 IU/day without medical supervision."
+  b12:
+    name: Vitamin B12
+    form: "Cyanocobalamin or methylcobalamin"
+    dose: {deficient: "1000 mcg daily (doctor may give injections)", low: "500 mcg daily", diet: "25-100 mcg daily or 1000 mcg twice weekly"}
+    diet_trigger_pct: 60
+    always_if: {diet: [vegan], age_min: 51}
+    tips: ["Vegans need a reliable B12 source regardless of lab results.", "Absorption from food declines after age 50 - supplements/fortified foods are absorbed well."]
+    caution: "Generally safe; long-term metformin or antacid users should test B12 regularly."
+  folate:
+    name: Folic acid
+    form: "Folic acid"
+    dose: {deficient: "1-5 mg daily as prescribed", low: "400 mcg daily", diet: "400 mcg daily"}
+    diet_trigger_pct: 60
+    always_if: {life_stage: [pregnant_t1, pregnant_t2, pregnant_t3]}
+    tips: ["Women who could become pregnant: 400 mcg daily from at least one month before conception."]
+    caution: "High-dose folic acid can mask B12 deficiency - check B12 too."
+  calcium:
+    name: Calcium
+    form: "Calcium carbonate (with food) or citrate"
+    dose: {deficient: "500 mg daily", low: "500 mg daily", diet: "500 mg daily if dietary intake stays below target"}
+    diet_trigger_pct: 60
+    tips: ["Take no more than 500 mg at once; separate from iron supplements.", "Food first: dairy, calcium-set tofu, small fish with bones, ragi, sesame."]
+    caution: "Avoid if serum calcium is high or with a history of kidney stones unless advised by a doctor."
+  zinc:
+    name: Zinc
+    form: "Zinc gluconate / sulfate"
+    dose: {deficient: "15-25 mg daily for 2-3 months", low: "10-15 mg daily", diet: "Multivitamin with ~10 mg zinc"}
+    diet_trigger_pct: 50
+    tips: ["Take away from iron and calcium supplements."]
+    caution: "Long-term doses above 40 mg/day can cause copper deficiency."
+  protein:
+    name: Protein supplement
+    form: "Whey or plant (pea/soy) protein powder"
+    dose: {deficient: "20-30 g daily alongside food changes", low: "20 g daily if food changes are not enough", diet: "Food first; a 20 g serving can close the gap if appetite is limited"}
+    diet_trigger_pct: 60
+    tips: ["Spread protein evenly across meals (25-30 g per meal for adults)."]
+    caution: "People with kidney disease must not increase protein without medical advice."
+  vit_a:
+    name: Vitamin A
+    food_first: true   # only suggested as a supplement when a lab confirms deficiency
+    form: "Beta-carotene rich foods preferred"
+    dose: {deficient: "As prescribed by a doctor", low: "Food first", diet: "Food first - orange/yellow vegetables and dark leafy greens"}
+    diet_trigger_pct: 30
+    tips: ["Preformed vitamin A supplements are rarely needed outside public-health programmes."]
+    caution: "Avoid high-dose vitamin A supplements in pregnancy (birth-defect risk)."
+  vit_c:
+    name: Vitamin C
+    food_first: true   # only suggested as a supplement when a lab confirms deficiency
+    form: "Ascorbic acid"
+    dose: {deficient: "100-250 mg daily", low: "100 mg daily", diet: "Food first - one guava, orange or amla covers the day"}
+    diet_trigger_pct: 30
+    tips: ["Eat vitamin C foods with iron-rich meals to boost absorption."]
+    caution: "Doses above 2 g/day can cause GI upset and kidney stones."
+  fibre:
+    name: Fibre (psyllium)
+    form: "Psyllium husk (isabgol)"
+    dose: {deficient: "5 g daily with water", low: "5 g daily with water", diet: "Food first; 5 g psyllium if whole grains/legumes are hard to add"}
+    diet_trigger_pct: 40
+    tips: ["Increase gradually and drink plenty of water."]
+    caution: "Separate from medicines by 2 hours."

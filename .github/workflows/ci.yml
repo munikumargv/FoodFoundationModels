@@ -23,3 +23,8 @@ jobs:
       - name: Example profiles render
         run: |
           for f in examples/*.json; do foodfm recommend --profile "$f" --engine builtin > /dev/null; done
+      - name: Gap analyzer runs for every demo persona
+        run: |
+          for p in priya james amara hiroshi; do foodfm analyze --persona "$p" > /dev/null; done
+      - name: Web bundle builds
+        run: python scripts/build_site.py --out /tmp/site

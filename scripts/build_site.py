@@ -1,6 +1,6 @@
 """Build the static GitHub Pages site into _site/.
 
-The page runs the built-in grounded engine in the browser with Pyodide. YAML
+The page runs the nutrition gap analyzer in the browser with Pyodide. YAML
 files are converted to JSON (valid YAML) and a tiny `yaml` shim is bundled, so
 no extra Pyodide packages are needed.
 
@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import sys
 import zipfile
 from pathlib import Path
 
@@ -26,7 +27,7 @@ def safe_load(stream):
     return json.load(stream) if hasattr(stream, "read") else json.loads(stream)
 '''
 # Only what the built-in engine needs (no torch-dependent modules).
-PACKAGE_FILES = ["__init__.py", "knowledge.py", "profile.py", "calculators.py", "retrieval.py", "grounding.py"]
+PACKAGE_FILES = ["__init__.py", "knowledge.py", "profile.py", "calculators.py", "labs.py", "gaps.py"]
 
 
 def build(out: Path) -> Path:
@@ -43,6 +44,11 @@ def build(out: Path) -> Path:
         z.writestr("yaml.py", YAML_SHIM)
         z.write(ROOT / "web" / "web_api.py", "web_api.py")
     shutil.copy(ROOT / "web" / "index.html", out / "index.html")
+    # Pre-exported so the UI renders immediately while the Python engine loads.
+    sys.path[:0] = [str(ROOT / "src"), str(ROOT / "web")]
+    import web_api
+
+    (out / "bootstrap.json").write_text(web_api.bootstrap(), encoding="utf-8")
     (out / ".nojekyll").touch()
     return out
 

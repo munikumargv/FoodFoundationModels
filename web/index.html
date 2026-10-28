@@ -1,258 +1,731 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FoodFM Nutrition Planner</title>
-<meta name="description" content="Standards-based nutrition recommendations adapted to country food habits, age and personal factors.">
+<title>NutriScan Gap Analyzer</title>
+<meta name="description" content="Snap your meals, add lab results, and see your nutrition gaps against the RDA, the supplements you need, and foods from your country to close them.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <style>
   :root {
-    --bg: #f7f7f4; --surface: #ffffff; --text: #1d1d1b; --muted: #5f5f5a; --border: #dcdcd5;
-    --accent: #2f6f4f; --accent-text: #ffffff; --warn-bg: #fff6e0; --warn-border: #e7c56b; --error: #b3261e;
+    --bg: #090b16; --bg2: #0f1224; --surface: rgba(255,255,255,0.055); --surface-2: rgba(255,255,255,0.09);
+    --border: rgba(255,255,255,0.12); --text: #f3f4fb; --muted: #a2a6c4; --faint: #6e7294;
+    --accent-1: #8b5cf6; --accent-2: #22d3ee; --accent-3: #f472b6; --accent-text: #ffffff;
+    --track: rgba(255,255,255,0.08); --shadow: 0 20px 60px rgba(0,0,0,0.45);
+    --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b;
+    --blob-opacity: 0.55;
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #161715; --surface: #1f201e; --text: #ecece6; --muted: #a5a59d; --border: #3a3b37;
-      --accent: #6fbf8f; --accent-text: #0e1a13; --warn-bg: #2d2714; --warn-border: #7a6526; --error: #f2948c;
+  :root[data-theme="light"] {
+    --bg: #f5f6fb; --bg2: #eceefa; --surface: rgba(255,255,255,0.78); --surface-2: rgba(255,255,255,0.95);
+    --border: rgba(20,22,48,0.12); --text: #15172e; --muted: #555a7a; --faint: #8a8ea8;
+    --track: rgba(20,22,48,0.08); --shadow: 0 20px 50px rgba(40,44,90,0.14); --blob-opacity: 0.28;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f5f6fb; --bg2: #eceefa; --surface: rgba(255,255,255,0.78); --surface-2: rgba(255,255,255,0.95);
+      --border: rgba(20,22,48,0.12); --text: #15172e; --muted: #555a7a; --faint: #8a8ea8;
+      --track: rgba(20,22,48,0.08); --shadow: 0 20px 50px rgba(40,44,90,0.14); --blob-opacity: 0.28;
     }
   }
-  :root[data-theme="dark"] {
-    --bg: #161715; --surface: #1f201e; --text: #ecece6; --muted: #a5a59d; --border: #3a3b37;
-    --accent: #6fbf8f; --accent-text: #0e1a13; --warn-bg: #2d2714; --warn-border: #7a6526; --error: #f2948c;
-  }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; }
-  h1 { font-size: 1.6rem; margin: 0 0 4px; }
-  .sub { color: var(--muted); margin: 0 0 16px; }
-  .notice { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 8px; padding: 10px 14px; font-size: .9rem; margin-bottom: 20px; }
-  form, .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
-  fieldset { border: 0; padding: 0; margin: 0 0 18px; }
-  legend { font-weight: 600; margin-bottom: 8px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px 16px; }
-  label { display: flex; flex-direction: column; gap: 4px; font-size: .9rem; color: var(--muted); }
-  input, select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px; min-width: 0; }
-  .row { display: flex; gap: 8px; }
-  .row > * { flex: 1; }
-  .checks { display: flex; flex-wrap: wrap; gap: 6px 14px; }
-  .checks label { flex-direction: row; align-items: center; gap: 6px; color: var(--text); }
-  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-  button { font: inherit; border: 0; border-radius: 6px; padding: 10px 18px; background: var(--accent); color: var(--accent-text); cursor: pointer; font-weight: 600; }
-  button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-  button:disabled { opacity: .5; cursor: wait; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--text); font: 15px/1.55 "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 100vh; overflow-x: hidden; }
+  .blobs { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .blobs span { position: absolute; border-radius: 50%; filter: blur(90px); opacity: var(--blob-opacity); animation: drift 22s ease-in-out infinite alternate; }
+  .blobs span:nth-child(1) { width: 520px; height: 520px; background: var(--accent-1); top: -160px; left: -120px; }
+  .blobs span:nth-child(2) { width: 460px; height: 460px; background: var(--accent-2); top: 30%; right: -160px; animation-delay: -6s; }
+  .blobs span:nth-child(3) { width: 380px; height: 380px; background: var(--accent-3); bottom: -160px; left: 30%; animation-delay: -12s; }
+  @keyframes drift { to { transform: translate(60px, 40px) scale(1.15); } }
+  @media (prefers-reduced-motion: reduce) { .blobs span { animation: none; } * { transition: none !important; animation: none !important; } }
+
+  .wrap { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: 20px 16px 80px; }
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; }
+  .logo { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); box-shadow: 0 8px 24px rgba(139,92,246,0.45); }
+  .brand small { display: block; font-weight: 500; font-size: .72rem; color: var(--muted); letter-spacing: 0; }
+  .icon-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 12px; width: 40px; height: 40px; cursor: pointer; font-size: 18px; }
+
+  .hero { text-align: center; padding: 18px 0 10px; }
+  .hero h1 { font-size: clamp(1.8rem, 4.6vw, 3rem); line-height: 1.1; margin: 0 0 10px; letter-spacing: -0.035em; font-weight: 800; }
+  .grad { background: linear-gradient(90deg, var(--accent-1), var(--accent-2) 55%, var(--accent-3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { color: var(--muted); max-width: 640px; margin: 0 auto 18px; }
+  .personas { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .persona { display: flex; align-items: center; gap: 10px; text-align: left; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 16px; padding: 8px 14px 8px 8px; cursor: pointer; font: inherit; transition: transform .2s, border-color .2s, background .2s; backdrop-filter: blur(14px); }
+  .persona:hover { transform: translateY(-2px); border-color: var(--accent-1); }
+  .persona.active { background: linear-gradient(135deg, rgba(139,92,246,.28), rgba(34,211,238,.18)); border-color: var(--accent-1); }
+  .persona .av { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-size: 22px; background: var(--surface-2); }
+  .persona b { display: block; font-size: .92rem; }
+  .persona span.t { font-size: .74rem; color: var(--muted); }
+  .demo-hint { color: var(--faint); font-size: .78rem; text-align: center; margin: 4px 0 18px; }
+
+  .stepper { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 0 18px; }
+  .step-btn { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); border-radius: 14px; padding: 10px 12px; cursor: pointer; font: inherit; text-align: left; min-width: 0; backdrop-filter: blur(14px); }
+  .step-btn .n { flex: none; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; font-weight: 700; background: var(--surface-2); color: var(--text); }
+  .step-btn .lbl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; font-size: .88rem; }
+  .step-btn.active { color: var(--text); border-color: var(--accent-1); box-shadow: 0 0 0 1px var(--accent-1) inset; }
+  .step-btn.active .n { background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); color: #fff; }
+  .step-btn.done .n { background: rgba(12,163,12,.25); color: var(--text); }
+  @media (max-width: 640px) { .step-btn .lbl { display: none; } .step-btn { justify-content: center; } }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 22px; backdrop-filter: blur(18px); box-shadow: var(--shadow); animation: rise .45s ease both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+  .panel h2 { margin: 0 0 4px; font-size: 1.3rem; letter-spacing: -0.02em; }
+  .panel .lead { color: var(--muted); margin: 0 0 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+  label.f { display: flex; flex-direction: column; gap: 6px; font-size: .8rem; color: var(--muted); font-weight: 600; min-width: 0; }
+  input, select, textarea { font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; min-width: 0; width: 100%; }
+  input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 1px; }
+  select option { background: var(--bg2); color: var(--text); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--border); background: var(--surface-2); color: var(--text); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: .82rem; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: linear-gradient(135deg, rgba(139,92,246,.35), rgba(34,211,238,.25)); border-color: var(--accent-1); }
+  .section-title { font-weight: 700; margin: 20px 0 10px; font-size: .95rem; }
+
+  .nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+  .btn { font: inherit; font-weight: 700; border: 0; border-radius: 14px; padding: 12px 22px; cursor: pointer; color: var(--accent-text); background: linear-gradient(135deg, var(--accent-1), #6d5dfc 45%, var(--accent-2)); box-shadow: 0 10px 28px rgba(139,92,246,.4); transition: transform .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 14px 34px rgba(139,92,246,.5); }
+  .btn:disabled { opacity: .55; cursor: wait; transform: none; }
+  .btn.ghost { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+  .btn.small { padding: 8px 14px; font-size: .85rem; border-radius: 11px; }
+
+  /* meals */
+  .drop { border: 2px dashed var(--border); border-radius: 18px; padding: 22px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
+  .drop.over, .drop:hover { border-color: var(--accent-2); background: rgba(34,211,238,.06); }
+  .drop .big { font-size: 34px; }
+  .meals { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 18px; }
+  .meal { background: var(--surface-2); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
+  .photo { position: relative; aspect-ratio: 4/3; background: var(--bg2); overflow: hidden; }
+  .photo img, .photo svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .scanline { position: absolute; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--accent-2), transparent); box-shadow: 0 0 18px var(--accent-2); animation: scan 1.1s ease-in-out infinite; }
+  @keyframes scan { 0% { top: 0; } 50% { top: calc(100% - 3px); } 100% { top: 0; } }
+  .scanning .photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 0 48%, rgba(34,211,238,.10) 50%, transparent 52% 100%); background-size: 100% 24px; }
+  .badge { position: absolute; top: 10px; left: 10px; font-size: .7rem; font-weight: 700; padding: 4px 9px; border-radius: 999px; background: rgba(9,11,22,.72); color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.18); }
+  .meal-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .meal-head { display: flex; gap: 8px; align-items: center; }
+  .meal-head input { font-weight: 700; padding: 6px 10px; }
+  .item { display: flex; align-items: center; gap: 8px; font-size: .86rem; }
+  .item .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stepper-mini { display: flex; align-items: center; gap: 4px; flex: none; }
+  .stepper-mini button { width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font-weight: 700; }
+  .stepper-mini span { min-width: 34px; text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .x { background: none; border: 0; color: var(--faint); cursor: pointer; font-size: 16px; }
+  .add-food { display: flex; gap: 6px; }
+  .add-food input { padding: 7px 10px; font-size: .85rem; }
+  .muted { color: var(--muted); }
+  .note { font-size: .8rem; color: var(--muted); }
+
+  /* labs */
+  .lab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .lab-cell { display: flex; align-items: center; gap: 8px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
+  .lab-cell .ln { flex: 1; font-size: .82rem; font-weight: 600; min-width: 0; }
+  .lab-cell .ln small { display: block; color: var(--faint); font-weight: 500; }
+  .lab-cell input { width: 84px; flex: none; padding: 6px 8px; text-align: right; }
+  .lab-cell.filled { border-color: rgba(34,211,238,.55); }
+  pre.raw { white-space: pre-wrap; font-size: .76rem; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; max-height: 190px; overflow: auto; margin: 0; }
+  .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: .86rem; cursor: pointer; }
+
+  /* results */
+  .results { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .hero-card { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
+  @media (max-width: 720px) { .hero-card { grid-template-columns: minmax(0, 1fr); text-align: center; } .hero-card .ring { margin: 0 auto; } .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .ring { position: relative; width: 168px; height: 168px; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .val { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .ring .val b { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .ring .val small { display: block; color: var(--muted); font-size: .75rem; margin-top: 2px; }
+  .ring circle.prog { transition: stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1); }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 14px; }
+  .kpi { background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+  .kpi .k { font-size: .74rem; color: var(--muted); font-weight: 600; }
+  .kpi .v { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
+  .summary { font-size: 1.05rem; margin: 0; }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .card-head h3 { margin: 0; font-size: 1.12rem; letter-spacing: -0.01em; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .76rem; color: var(--muted); }
+  .legend i, .st i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+  .bars { display: grid; gap: 10px; }
+  .bar-row { display: grid; grid-template-columns: 150px 1fr 150px; gap: 12px; align-items: center; padding: 6px 8px; border-radius: 12px; cursor: default; }
+  .bar-row:hover, .bar-row:focus { background: var(--surface-2); outline: none; }
+  .bar-row .name { font-weight: 700; font-size: .9rem; }
+  .bar-row .name small { display: block; font-weight: 500; color: var(--muted); font-size: .74rem; }
+  .track { position: relative; height: 14px; border-radius: 4px; background: var(--track); }
+  .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 0 4px 4px 0; transition: width 1.1s cubic-bezier(.2,.8,.2,1); }
+  .mark100 { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--text); opacity: .55; border-radius: 1px; }
+  .bar-row .right { text-align: right; font-size: .82rem; }
+  .st { font-weight: 700; font-size: .78rem; white-space: nowrap; }
+  .labtag { display: inline-block; margin-top: 3px; font-size: .7rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); }
+  @media (max-width: 640px) { .bar-row { grid-template-columns: 1fr auto; } .bar-row .track { grid-column: 1 / -1; grid-row: 2; } }
+  .insight { grid-column: 1 / -1; font-size: .78rem; color: var(--muted); margin-top: -2px; }
+
+  .cards3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+  .supp { background: var(--surface-2); border: 1px solid var(--border); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; }
+  .supp::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--pc); }
+  .supp .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .supp h4 { margin: 0; font-size: 1.05rem; }
+  .prio { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--pc); }
+  .dose { font-weight: 700; font-size: .95rem; }
+  .supp ul { margin: 0; padding-left: 18px; font-size: .8rem; color: var(--muted); }
+  .caution { font-size: .76rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 8px; }
+
+  .food { background: var(--surface-2); border: 1px solid var(--border); border-radius: 18px; padding: 14px; display: flex; gap: 12px; align-items: flex-start; transition: transform .2s; }
+  .food:hover { transform: translateY(-2px); }
+  .food .em { font-size: 34px; line-height: 1; width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--surface); flex: none; }
+  .food h4 { margin: 0 0 2px; font-size: .95rem; }
+  .food .sv { font-size: .76rem; color: var(--muted); }
+  .boost { display: inline-block; margin: 6px 6px 0 0; font-size: .72rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: linear-gradient(135deg, rgba(139,92,246,.22), rgba(34,211,238,.18)); border: 1px solid var(--border); }
+  .local { font-size: .66rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--accent-2); margin-left: 6px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; font-size: .76rem; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .table-scroll { overflow-x: auto; }
+  .disclaimer { font-size: .78rem; color: var(--muted); }
+  .tooltip { position: fixed; z-index: 50; pointer-events: none; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; font-size: .8rem; box-shadow: var(--shadow); max-width: 280px; opacity: 0; transition: opacity .12s; }
+  .tooltip.show { opacity: 1; }
+  .tooltip b { display: block; margin-bottom: 4px; }
+  .loader { display: inline-flex; align-items: center; gap: 8px; font-size: .8rem; color: var(--muted); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-2); animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .25; transform: scale(.7); } }
   .hidden { display: none !important; }
-  #status { color: var(--muted); font-size: .9rem; }
-  #errors { color: var(--error); }
-  #result { margin-top: 20px; }
-  #plan ul { padding-left: 20px; margin: 4px 0 12px; }
-  #plan p { margin: 12px 0 4px; }
-  pre { white-space: pre-wrap; word-break: break-word; font-size: .8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
-  footer { color: var(--muted); font-size: .8rem; margin-top: 24px; }
-  a { color: var(--accent); }
+  .err { color: var(--critical); font-weight: 600; }
+  footer { color: var(--faint); font-size: .76rem; text-align: center; margin-top: 30px; }
+  footer a { color: var(--muted); }
+  @media print {
+    body { background: #fff; color: #111; }
+    .blobs, header.top, .hero, .stepper, .nav, .no-print, .tooltip { display: none !important; }
+    .panel { box-shadow: none; border-color: #ddd; background: #fff; backdrop-filter: none; break-inside: avoid; }
+    :root { --text: #111; --muted: #444; --surface-2: #f5f5f5; --border: #ddd; --track: #eee; }
+  }
 </style>
 </head>
 <body>
-<main>
-  <h1>FoodFM Nutrition Planner</h1>
-  <p class="sub">Standards-based nutrition recommendations (WHO, NASEM, national dietary guidelines) adapted to the food habits of the 25 most populous countries, age and personal factors.</p>
-  <div class="notice">General information only, not medical advice. Everything runs in your browser and nothing you enter is sent anywhere. This page uses the built-in grounded engine; the fine-tuned LLM runs locally (see the <a href="https://github.com/munikumargv/FoodFoundationModels">README</a>).</div>
-
-  <form id="form">
-    <fieldset>
-      <legend>About the person</legend>
-      <div class="grid">
-        <label>Country <select id="country" required></select></label>
-        <label>Age
-          <span class="row"><input id="age" type="number" min="0" max="129" step="0.1" required value="30"><select id="ageUnit"><option value="years">years</option><option value="months">months</option></select></span>
-        </label>
-        <label>Biological sex <select id="sex"><option value="female">female</option><option value="male">male</option></select></label>
-        <label>Weight (kg, optional) <input id="weight_kg" type="number" min="2" max="400" step="0.1"></label>
-        <label>Height (cm, optional) <input id="height_cm" type="number" min="40" max="250" step="0.1"></label>
-        <label id="life_stageWrap">Pregnancy / lactation <select id="life_stage"></select></label>
-      </div>
-    </fieldset>
-    <fieldset>
-      <legend>Lifestyle and preferences</legend>
-      <div class="grid" id="singles"></div>
-    </fieldset>
-    <fieldset id="multis"></fieldset>
-    <div class="actions">
-      <button id="submit" type="submit" disabled>Loading engine…</button>
-      <label class="checks"><label><input id="showPrompt" type="checkbox"> Show grounded LLM prompt</label></label>
-      <span id="status">Loading Python runtime (first visit takes a few seconds)…</span>
+<div class="blobs" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">🥗</div><div>NutriScan<small>FoodFM nutrition gap analyzer</small></div></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <span id="engine" class="loader"><span class="dot"></span>Starting engine…</span>
+      <button class="icon-btn" id="theme" title="Toggle light/dark" aria-label="Toggle light or dark theme">🌗</button>
     </div>
-    <p id="errors"></p>
-  </form>
+  </header>
 
-  <section id="result" class="card hidden" aria-live="polite">
-    <div id="plan"></div>
-    <div class="actions">
-      <button id="download" type="button" class="secondary">Download profile JSON</button>
-      <span id="cliHint" class="sub"></span>
-    </div>
-    <details id="promptWrap" class="hidden"><summary>Grounded prompt sent to the LLM</summary><pre id="prompt"></pre></details>
+  <section class="hero">
+    <h1>Snap your meals.<br><span class="grad">See your nutrition gaps.</span></h1>
+    <p>Upload food photos and (optionally) your lab report. NutriScan compares what you eat with the RDA for your age and sex, then tells you which supplements you need and which foods from your country close the gaps.</p>
+    <div class="personas" id="personas"></div>
+    <div class="demo-hint">Demo mode: pick a persona to load sample meal photos and a lab report, or start blank.</div>
   </section>
 
-  <footer>Knowledge base last reviewed: <span id="reviewed">–</span>. Source code and fine-tuning pipeline: <a href="https://github.com/munikumargv/FoodFoundationModels">FoodFoundationModels</a>.</footer>
-</main>
+  <nav class="stepper" id="stepper" aria-label="Steps"></nav>
+  <main id="view"></main>
+
+  <footer>Nutrient data are approximate reference values (USDA FoodData Central, national tables) and RDAs follow WHO/NASEM. Knowledge base reviewed <span id="reviewed">–</span>. Not medical advice. · <a href="https://github.com/munikumargv/FoodFoundationModels">Source on GitHub</a></footer>
+</div>
+<div class="tooltip" id="tip" role="status"></div>
+<input type="file" id="photoInput" accept="image/*" multiple class="hidden">
+<input type="file" id="labInput" accept=".pdf,.txt,.csv,image/*" class="hidden">
 
 <script>
-const PYODIDE_URL = new URLSearchParams(location.search).get("pyodide") || "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
-const SINGLE_LABELS = { activity_level: "Activity level", dietary_pattern: "Diet / religious practice", goal: "Goal", budget: "Budget", climate: "Climate" };
-const DEFAULTS = { activity_level: "light", life_stage: "none", dietary_pattern: "omnivore", goal: "maintain_health", budget: "medium", climate: "temperate" };
-const MULTIS = ["medical_conditions", "allergies", "lifestyle"];
+"use strict";
+const params = new URLSearchParams(location.search);
+const PYODIDE_URL = params.get("pyodide") || "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
+const PDFJS_URL = params.get("pdfjs") || "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+// Optional real vision model: an endpoint that accepts a POSTed image (multipart field "image")
+// and returns {"labels": ["dal", "rice", ...]} or {"items": [{"food": "dal", "servings": 1}]}.
+const VISION_ENDPOINT = params.get("vision") || window.FOODFM_VISION_ENDPOINT || "";
+
+const FLAGS = { india: "IN", china: "CN", united_states: "US", indonesia: "ID", pakistan: "PK", nigeria: "NG", brazil: "BR", bangladesh: "BD",
+  russia: "RU", ethiopia: "ET", mexico: "MX", japan: "JP", egypt: "EG", philippines: "PH", dr_congo: "CD", vietnam: "VN", iran: "IR",
+  turkey: "TR", germany: "DE", thailand: "TH", united_kingdom: "GB", tanzania: "TZ", france: "FR", south_africa: "ZA", italy: "IT" };
+const AVATARS = { priya: "👩🏽", james: "👨🏼", amara: "🤰🏿", hiroshi: "👴🏻" };
+const STATUS = {
+  deficient: { label: "Deficient", color: "var(--critical)", icon: "▼▼" },
+  low: { label: "Low", color: "var(--serious)", icon: "▼" },
+  borderline: { label: "Borderline", color: "var(--warning)", icon: "◆" },
+  adequate: { label: "Adequate", color: "var(--good)", icon: "✓" },
+  excess: { label: "Over limit", color: "var(--critical)", icon: "▲" },
+  watch: { label: "Watch", color: "var(--warning)", icon: "!" },
+};
+const PRIORITY = { high: { label: "High priority", color: "var(--critical)" }, medium: { label: "Recommended", color: "var(--serious)" }, consider: { label: "Consider", color: "var(--warning)" } };
+const STEPS = ["Profile", "Meal photos", "Lab report", "Results"];
+
 const $ = (id) => document.getElementById(id);
-const human = (s) => s.replace(/_/g, " ");
-let py, api, lastProfile;
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const human = (s) => String(s).replace(/_/g, " ");
+const flag = (id) => (FLAGS[id] || "").replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)));
+const fmt = (n) => (Math.abs(n) >= 100 ? Math.round(n) : Math.round(n * 10) / 10).toLocaleString();
 
-function fillSelect(sel, values, def) {
-  sel.innerHTML = "";
-  for (const v of values) {
-    const o = document.createElement("option");
-    o.value = typeof v === "string" ? v : v.id;
-    o.textContent = typeof v === "string" ? human(v) : v.name;
-    if (o.value === def) o.selected = true;
-    sel.appendChild(o);
-  }
-}
+let boot = null, api = null, engineReady = null;
+const blankProfile = () => ({ country: "india", age: 30, sex: "female", weight_kg: 60, height_cm: 160, activity_level: "light", life_stage: "none", dietary_pattern: "omnivore", allergies: [] });
+const state = { step: 1, persona: null, profile: blankProfile(), meals: [], labText: "", labFile: "", labValues: {}, noLabs: false, report: null, tableView: false };
+let mealSeq = 0;
 
-function buildForm(opts) {
-  fillSelect($("country"), opts.countries, "india");
-  fillSelect($("life_stage"), opts.factors.life_stage.options, "none");
-  for (const [name, label] of Object.entries(SINGLE_LABELS)) {
-    const wrap = document.createElement("label");
-    wrap.id = name + "Wrap";
-    wrap.textContent = label + " ";
-    const sel = document.createElement("select");
-    sel.id = name;
-    fillSelect(sel, opts.factors[name].options, DEFAULTS[name]);
-    wrap.appendChild(sel);
-    $("singles").appendChild(wrap);
-  }
-  for (const name of MULTIS) {
-    const fs = document.createElement("div");
-    fs.id = name + "Wrap";
-    fs.style.marginBottom = "14px";
-    fs.innerHTML = `<div style="font-weight:600;margin-bottom:6px">${opts.factors[name].question}</div>`;
-    const box = document.createElement("div");
-    box.className = "checks";
-    for (const v of opts.factors[name].options) {
-      const l = document.createElement("label");
-      l.innerHTML = `<input type="checkbox" name="${name}" value="${v}"> ${human(v)}`;
-      box.appendChild(l);
-    }
-    fs.appendChild(box);
-    $("multis").appendChild(fs);
-  }
-  $("reviewed").textContent = opts.last_reviewed;
-  for (const id of ["age", "ageUnit", "sex"]) $(id).addEventListener("input", applyVisibility);
-  applyVisibility();
-}
-
-function ageYears() {
-  const v = parseFloat($("age").value);
-  return $("ageUnit").value === "months" ? Math.round((v / 12) * 100) / 100 : v;
-}
-
-// Mirror the CLI: hide questions that do not apply to this age/sex.
-function applyVisibility() {
-  const age = ageYears();
-  const show = (id, on) => $(id).classList.toggle("hidden", !on);
-  show("life_stageWrap", $("sex").value === "female" && age >= 12 && age <= 55);
-  show("activity_levelWrap", age >= 2);
-  show("dietary_patternWrap", age >= 2);
-  show("goalWrap", age >= 18);
-  show("medical_conditionsWrap", age >= 1);
-  show("lifestyleWrap", age >= 18);
-}
-
-function collectProfile() {
-  const age = ageYears();
-  const visible = (id) => !$(id + "Wrap").classList.contains("hidden");
-  const val = (id) => (visible(id) ? $(id).value : DEFAULTS[id]);
-  const num = (id) => ($(id).value === "" ? null : parseFloat($(id).value));
-  const multi = (name) => visible(name) ? [...document.querySelectorAll(`input[name="${name}"]:checked`)].map((c) => c.value) : [];
-  return {
-    country: $("country").value, age, sex: $("sex").value, weight_kg: num("weight_kg"), height_cm: num("height_cm"),
-    activity_level: val("activity_level"), life_stage: visible("life_stage") ? $("life_stage").value : "none",
-    dietary_pattern: val("dietary_pattern"), medical_conditions: multi("medical_conditions"), allergies: multi("allergies"),
-    goal: val("goal"), budget: $("budget").value, climate: $("climate").value, lifestyle: multi("lifestyle"),
-  };
-}
-
-function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
-
-// The plan uses a tiny Markdown subset: **bold**, "- " bullets and blank lines.
-function renderMarkdown(md) {
-  const html = [];
-  let inList = false;
-  for (const raw of md.split("\n")) {
-    const line = escapeHtml(raw).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-    if (raw.startsWith("- ")) {
-      if (!inList) { html.push("<ul>"); inList = true; }
-      html.push(`<li>${line.slice(2)}</li>`);
-    } else {
-      if (inList) { html.push("</ul>"); inList = false; }
-      if (raw.trim()) html.push(`<p>${line}</p>`);
-    }
-  }
-  if (inList) html.push("</ul>");
-  return html.join("");
-}
-
-async function boot() {
-  try {
-    const script = document.createElement("script");
-    script.src = PYODIDE_URL + "pyodide.js";
-    await new Promise((ok, fail) => { script.onload = ok; script.onerror = () => fail(new Error("could not load Pyodide")); document.head.appendChild(script); });
-    py = await loadPyodide({ indexURL: PYODIDE_URL });
-    const bundle = await (await fetch("foodfm_bundle.zip")).arrayBuffer();
-    py.unpackArchive(bundle, "zip", { extractDir: "/home/pyodide/app" });
-    py.runPython(`
+// ------------------------------------------------------------------ engine
+async function startEngine() {
+  const script = document.createElement("script");
+  script.src = PYODIDE_URL + "pyodide.js";
+  await new Promise((ok, fail) => { script.onload = ok; script.onerror = () => fail(new Error("could not load Pyodide")); document.head.appendChild(script); });
+  const py = await loadPyodide({ indexURL: PYODIDE_URL });
+  const bundle = await (await fetch("foodfm_bundle.zip")).arrayBuffer();
+  py.unpackArchive(bundle, "zip", { extractDir: "/home/pyodide/app" });
+  py.runPython(`
 import os, sys
-sys.path.insert(0, "/home/pyodide/app")
-sys.path.insert(0, "/home/pyodide/app/src")
+sys.path[:0] = ["/home/pyodide/app", "/home/pyodide/app/src"]
 os.environ["FOODFM_KNOWLEDGE_DIR"] = "/home/pyodide/app/knowledge"
 os.environ["FOODFM_CONFIG_DIR"] = "/home/pyodide/app/configs"
 `);
-    api = py.pyimport("web_api");
-    buildForm(JSON.parse(api.options()));
-    $("submit").disabled = false;
-    $("submit").textContent = "Get my nutrition plan";
-    $("status").textContent = "";
-  } catch (e) {
-    $("status").textContent = "Failed to load the engine: " + e.message;
+  api = py.pyimport("web_api");
+  $("engine").innerHTML = `<span class="dot" style="background:var(--good);animation:none"></span>Engine ready`;
+}
+
+// ------------------------------------------------------------------ personas & steps
+function renderPersonas() {
+  const list = boot.personas.map((p) => `
+    <button class="persona ${state.persona === p.id ? "active" : ""}" data-persona="${p.id}">
+      <span class="av">${AVATARS[p.id] || "🙂"}</span><span><b>${esc(p.name)} ${flag(p.profile.country)}</b><span class="t">${esc(p.tagline)}</span></span>
+    </button>`).join("");
+  $("personas").innerHTML = list + `<button class="persona ${state.persona === "blank" ? "active" : ""}" data-persona="blank"><span class="av">✨</span><span><b>Start blank</b><span class="t">Use your own photos & labs</span></span></button>`;
+}
+
+function loadPersona(id, scroll = true) {
+  state.persona = id;
+  state.report = null;
+  if (id === "blank") {
+    Object.assign(state, { profile: blankProfile(), meals: [], labText: "", labFile: "", labValues: {}, noLabs: false });
+  } else {
+    const p = boot.personas.find((x) => x.id === id);
+    state.profile = { ...blankProfile(), ...structuredClone(p.profile) };
+    state.meals = p.meals.map((m) => ({ id: ++mealSeq, name: m.name, image: null, source: "demo", items: structuredClone(m.items) }));
+    state.labText = p.lab_report || "";
+    state.labFile = p.lab_report ? `${p.name.toLowerCase()}_lab_report.txt (demo)` : "";
+    state.labValues = {};
+    state.noLabs = !p.lab_report;
+    if (state.labText) parseLabsWhenReady();
+  }
+  renderPersonas();
+  go(id === "blank" ? 1 : 2, scroll);
+}
+
+function renderStepper() {
+  $("stepper").innerHTML = STEPS.map((s, i) => {
+    const n = i + 1;
+    const cls = n === state.step ? "active" : n < state.step ? "done" : "";
+    return `<button class="step-btn ${cls}" data-step="${n}" ${n === 4 && !state.report ? "disabled" : ""}><span class="n">${n < state.step ? "✓" : n}</span><span class="lbl">${s}</span></button>`;
+  }).join("");
+}
+
+function go(step, scroll = true) {
+  state.step = step;
+  renderStepper();
+  const v = $("view");
+  v.innerHTML = "";
+  ({ 1: renderProfile, 2: renderMeals, 3: renderLabs, 4: renderResults })[step](v);
+  if (scroll) $("stepper").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+const navHtml = (back, next, nextLabel) => `<div class="nav no-print">${back ? `<button class="btn ghost" data-go="${back}">← Back</button>` : "<span></span>"}<button class="btn" id="nextBtn" data-go="${next}">${nextLabel}</button></div>`;
+
+// ------------------------------------------------------------------ step 1: profile
+function renderProfile(v) {
+  const p = state.profile;
+  const opt = (values, sel) => values.map((x) => `<option value="${x}" ${x === sel ? "selected" : ""}>${esc(human(x))}</option>`).join("");
+  v.innerHTML = `<section class="panel">
+    <h2>About you</h2><p class="lead">Your RDA depends on age, sex and life stage; your country shapes the foods we recommend.</p>
+    <div class="grid">
+      <label class="f">Country<select id="pf_country">${boot.countries.map((c) => `<option value="${c.id}" ${c.id === p.country ? "selected" : ""}>${flag(c.id)} ${esc(c.name)}</option>`).join("")}</select></label>
+      <label class="f">Age (years)<input id="pf_age" type="number" min="1" max="110" step="1" value="${p.age}"></label>
+      <label class="f">Sex<select id="pf_sex">${opt(["female", "male"], p.sex)}</select></label>
+      <label class="f">Weight (kg)<input id="pf_weight_kg" type="number" min="10" max="300" step="0.1" value="${p.weight_kg ?? ""}"></label>
+      <label class="f">Height (cm)<input id="pf_height_cm" type="number" min="60" max="230" step="0.1" value="${p.height_cm ?? ""}"></label>
+      <label class="f">Activity<select id="pf_activity_level">${opt(boot.options.activity_level, p.activity_level)}</select></label>
+      <label class="f" id="lifeWrap">Pregnancy / breastfeeding<select id="pf_life_stage">${opt(boot.options.life_stage, p.life_stage)}</select></label>
+      <label class="f">Diet<select id="pf_dietary_pattern">${opt(boot.options.dietary_pattern, p.dietary_pattern)}</select></label>
+    </div>
+    <div class="section-title">Food allergies</div>
+    <div class="chips" id="allergyChips">${boot.allergies.map((a) => `<button class="chip" data-allergy="${a}" aria-pressed="${p.allergies.includes(a)}">${esc(human(a))}</button>`).join("")}</div>
+    ${navHtml(0, 2, "Next: meal photos →")}
+  </section>`;
+  const sync = () => {
+    for (const k of ["country", "sex", "activity_level", "life_stage", "dietary_pattern"]) p[k] = $("pf_" + k).value;
+    for (const k of ["age", "weight_kg", "height_cm"]) p[k] = $("pf_" + k).value === "" ? null : parseFloat($("pf_" + k).value);
+    const canBePregnant = p.sex === "female" && p.age >= 12 && p.age <= 55;
+    $("lifeWrap").classList.toggle("hidden", !canBePregnant);
+    if (!canBePregnant) p.life_stage = "none";
+  };
+  v.querySelectorAll("input,select").forEach((el) => el.addEventListener("input", sync));
+  $("allergyChips").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-allergy]");
+    if (!b) return;
+    const a = b.dataset.allergy;
+    p.allergies = p.allergies.includes(a) ? p.allergies.filter((x) => x !== a) : [...p.allergies, a];
+    b.setAttribute("aria-pressed", p.allergies.includes(a));
+  });
+  sync();
+}
+
+// ------------------------------------------------------------------ step 2: meals
+function plateSvg(items) {
+  // Illustrated "photo" for demo meals: a plate with the detected foods.
+  const foods = items.map((it) => boot.foods.find((f) => f.id === it.food)).filter(Boolean);
+  const n = Math.max(foods.length, 1);
+  const pos = foods.map((f, i) => {
+    const a = (i / n) * Math.PI * 2 - Math.PI / 2, r = n === 1 ? 0 : 62;
+    return `<text x="${200 + Math.cos(a) * r}" y="${158 + Math.sin(a) * r}" font-size="${n === 1 ? 90 : 58}" text-anchor="middle" dominant-baseline="central">${f.emoji}</text>`;
+  }).join("");
+  return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Meal photo">
+    <defs><radialGradient id="tbl" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#3b2a1e"/><stop offset="1" stop-color="#1a120c"/></radialGradient>
+    <radialGradient id="plt" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#ffffff"/><stop offset=".8" stop-color="#e9ecf3"/><stop offset="1" stop-color="#c9cfdc"/></radialGradient></defs>
+    <rect width="400" height="300" fill="url(#tbl)"/>
+    <ellipse cx="200" cy="164" rx="150" ry="128" fill="rgba(0,0,0,.35)"/>
+    <circle cx="200" cy="155" r="128" fill="url(#plt)"/><circle cx="200" cy="155" r="100" fill="none" stroke="#d6dbe6" stroke-width="2"/>
+    ${pos}</svg>`;
+}
+
+const SOURCE_BADGE = { demo: "🤖 AI scan · demo", filename: "🔎 Matched from photo name", vision: "🤖 AI vision", manual: "✍️ Tag the foods", scanning: "Scanning…" };
+
+function renderMeals(v) {
+  v.innerHTML = `<section class="panel">
+    <h2>Meal photos</h2><p class="lead">Add photos of everything eaten in a typical day. Check the detected foods and portions (1× = one standard serving).</p>
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload meal photos"><div class="big">📸</div><b>Drop meal photos here or tap to upload</b><div class="note">JPG/PNG, one photo per meal. ${VISION_ENDPOINT ? "Recognised by the connected vision model." : "Demo: foods are matched from the file name (e.g. <i>dal_rice.jpg</i>) — connect a vision model for real recognition."}</div></div>
+    <div class="meals" id="meals"></div>
+    <datalist id="foodList">${boot.foods.map((f) => `<option value="${esc(f.name)}">`).join("")}</datalist>
+    ${navHtml(1, 3, "Next: lab report →")}
+  </section>`;
+  drawMeals();
+  const drop = $("drop");
+  drop.addEventListener("click", () => $("photoInput").click());
+  drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("photoInput").click(); } });
+  drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+  drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); addPhotos([...e.dataTransfer.files]); });
+}
+
+function drawMeals() {
+  const box = $("meals");
+  if (!box) return;
+  if (!state.meals.length) { box.innerHTML = `<p class="muted">No meals yet — upload photos above or pick a demo persona.</p>`; return; }
+  box.innerHTML = state.meals.map((m) => {
+    const items = m.items.map((it, idx) => {
+      const f = boot.foods.find((x) => x.id === it.food);
+      return `<div class="item"><span>${f.emoji}</span><span class="nm" title="${esc(f.name)} · ${esc(f.serving)}">${esc(f.name)}</span>
+        <span class="stepper-mini"><button data-dec="${m.id}:${idx}" aria-label="Less">−</button><span>${it.servings}×</span><button data-inc="${m.id}:${idx}" aria-label="More">+</button></span>
+        <button class="x" data-del="${m.id}:${idx}" aria-label="Remove ${esc(f.name)}">✕</button></div>`;
+    }).join("");
+    return `<article class="meal ${m.scanning ? "scanning" : ""}">
+      <div class="photo">${m.image ? `<img src="${m.image}" alt="${esc(m.name)} photo">` : plateSvg(m.items)}
+        ${m.scanning ? '<div class="scanline"></div>' : ""}<span class="badge">${SOURCE_BADGE[m.scanning ? "scanning" : m.source]}</span></div>
+      <div class="meal-body">
+        <div class="meal-head"><input value="${esc(m.name)}" data-rename="${m.id}" aria-label="Meal name"><button class="x" data-delmeal="${m.id}" aria-label="Remove meal">🗑</button></div>
+        ${m.scanning ? '<span class="loader"><span class="dot"></span>Detecting foods…</span>' : items || '<span class="note">No foods recognised — add them below.</span>'}
+        ${m.scanning ? "" : `<div class="add-food"><input list="foodList" placeholder="+ Add a food" data-add="${m.id}" aria-label="Add a food"></div>`}
+      </div></article>`;
+  }).join("");
+}
+
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button,[data-persona]");
+  if (!t) return;
+  if (t.dataset.persona) return loadPersona(t.dataset.persona);
+  if (t.dataset.step && !t.disabled) return go(+t.dataset.step);
+  if (t.dataset.go !== undefined && t.id !== "nextBtn") return go(+t.dataset.go);
+  const find = (key) => { const [mid, idx] = key.split(":").map(Number); return [state.meals.find((m) => m.id === mid), idx]; };
+  if (t.dataset.inc || t.dataset.dec) {
+    const [m, idx] = find(t.dataset.inc || t.dataset.dec);
+    const it = m.items[idx];
+    it.servings = Math.max(0.5, Math.min(6, it.servings + (t.dataset.inc ? 0.5 : -0.5)));
+    return drawMeals();
+  }
+  if (t.dataset.del) { const [m, idx] = find(t.dataset.del); m.items.splice(idx, 1); return drawMeals(); }
+  if (t.dataset.delmeal) { state.meals = state.meals.filter((m) => m.id !== +t.dataset.delmeal); return drawMeals(); }
+});
+document.addEventListener("change", (e) => {
+  const t = e.target;
+  if (t.dataset.rename) state.meals.find((m) => m.id === +t.dataset.rename).name = t.value;
+  if (t.dataset.add) {
+    const f = boot.foods.find((x) => x.name.toLowerCase() === t.value.trim().toLowerCase());
+    if (f) { state.meals.find((m) => m.id === +t.dataset.add).items.push({ food: f.id, servings: 1 }); drawMeals(); }
+  }
+});
+$("photoInput").addEventListener("change", (e) => { addPhotos([...e.target.files]); e.target.value = ""; });
+
+async function addPhotos(files) {
+  for (const file of files.filter((f) => f.type.startsWith("image/"))) {
+    const image = await new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(file); });
+    const meal = { id: ++mealSeq, name: file.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").slice(0, 30) || "Meal", image, source: "manual", items: [], scanning: true };
+    state.meals.push(meal);
+    drawMeals();
+    detectMeal(meal, file);
   }
 }
 
-$("form").addEventListener("submit", (ev) => {
-  ev.preventDefault();
-  $("errors").textContent = "";
-  const profile = collectProfile();
-  if (Number.isNaN(profile.age)) { $("errors").textContent = "Please enter an age."; return; }
-  const res = JSON.parse(api.recommend(JSON.stringify(profile), $("showPrompt").checked));
-  if (res.errors) { $("errors").textContent = res.errors.join("; "); return; }
-  lastProfile = res.profile;
-  $("plan").innerHTML = renderMarkdown(res.plan);
-  $("promptWrap").classList.toggle("hidden", !res.prompt);
-  $("prompt").textContent = res.prompt || "";
-  $("cliHint").textContent = "Reuse locally: foodfm recommend --profile profile.json";
-  $("result").classList.remove("hidden");
-  $("result").scrollIntoView({ behavior: "smooth" });
+async function detectMeal(meal, file) {
+  const minDelay = new Promise((ok) => setTimeout(ok, 1300));  // let the scan animation play
+  let items = [], source = "manual";
+  try {
+    if (VISION_ENDPOINT) {
+      const fd = new FormData();
+      fd.append("image", file);
+      fd.append("country", state.profile.country);
+      const res = await (await fetch(VISION_ENDPOINT, { method: "POST", body: fd })).json();
+      if (res.items) items = res.items;
+      else if (res.labels) { await engineReady; items = JSON.parse(api.detect(res.labels.join(" "), state.profile.country)); }
+      source = "vision";
+    } else {
+      await engineReady;
+      items = JSON.parse(api.detect(file.name, state.profile.country));
+      source = items.length ? "filename" : "manual";
+    }
+  } catch (err) {
+    console.warn("detection failed", err);
+  }
+  await minDelay;
+  Object.assign(meal, { items, source, scanning: false });
+  drawMeals();
+}
+
+// ------------------------------------------------------------------ step 3: labs
+async function parseLabsWhenReady() {
+  await engineReady;
+  const values = JSON.parse(api.parse_labs(state.labText));
+  state.labValues = Object.fromEntries(Object.entries(values).map(([k, v]) => [k, v.value]));
+  if (state.step === 3) go(3);
+}
+
+function renderLabs(v) {
+  const filled = Object.keys(state.labValues).length;
+  v.innerHTML = `<section class="panel">
+    <h2>Lab report <span class="muted" style="font-weight:500;font-size:.9rem">(optional)</span></h2>
+    <p class="lead">Blood tests confirm what the diet suggests — e.g. low ferritin turns an iron shortfall into a confirmed deficiency.</p>
+    <div class="drop" id="labDrop" tabindex="0" role="button" aria-label="Upload lab report"><div class="big">🧪</div><b>${state.labFile ? esc(state.labFile) : "Upload a lab report"}</b><div class="note">PDF (text-based), TXT or CSV are read automatically. For photos of reports, type the values below.</div></div>
+    <div id="labMsg" class="note" style="margin-top:8px"></div>
+    ${state.labText ? `<div class="section-title">Report text</div><pre class="raw">${esc(state.labText)}</pre>` : ""}
+    <div class="section-title" style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><span>Detected values ${filled ? `· ${filled} found` : ""}</span>
+      <label class="toggle"><input type="checkbox" id="noLabs" ${state.noLabs ? "checked" : ""} style="width:auto"> I don't have lab results</label></div>
+    <div class="lab-grid ${state.noLabs ? "hidden" : ""}" id="labGrid">${boot.markers.map((m) => `
+      <label class="lab-cell ${state.labValues[m.key] != null ? "filled" : ""}"><span class="ln">${esc(m.label)}<small>${esc(m.unit)}</small></span>
+      <input type="number" step="any" data-lab="${m.key}" value="${state.labValues[m.key] ?? ""}" placeholder="—"></label>`).join("")}</div>
+    ${navHtml(2, 4, "✨ Analyze my nutrition")}
+  </section>`;
+  const drop = $("labDrop");
+  drop.addEventListener("click", () => $("labInput").click());
+  drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("labInput").click(); } });
+  drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
+  drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+  drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); if (e.dataTransfer.files[0]) readLabFile(e.dataTransfer.files[0]); });
+  $("noLabs").addEventListener("change", (e) => { state.noLabs = e.target.checked; $("labGrid").classList.toggle("hidden", state.noLabs); });
+  v.querySelectorAll("[data-lab]").forEach((el) => el.addEventListener("input", () => {
+    if (el.value === "") delete state.labValues[el.dataset.lab]; else state.labValues[el.dataset.lab] = parseFloat(el.value);
+    el.closest(".lab-cell").classList.toggle("filled", el.value !== "");
+  }));
+}
+$("labInput").addEventListener("change", (e) => { if (e.target.files[0]) readLabFile(e.target.files[0]); e.target.value = ""; });
+
+async function pdfText(file) {
+  if (!window.pdfjsLib) {
+    await new Promise((ok, fail) => { const s = document.createElement("script"); s.src = PDFJS_URL + "pdf.min.js"; s.onload = ok; s.onerror = () => fail(new Error("could not load PDF reader")); document.head.appendChild(s); });
+    pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_URL + "pdf.worker.min.js";
+  }
+  const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+  const lines = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const content = await (await pdf.getPage(i)).getTextContent();
+    let line = "";
+    for (const item of content.items) { line += item.str + " "; if (item.hasEOL) { lines.push(line.trim()); line = ""; } }
+    if (line.trim()) lines.push(line.trim());
+  }
+  return lines.join("\n");
+}
+
+async function readLabFile(file) {
+  state.labFile = file.name;
+  state.noLabs = false;
+  const msg = (t) => { const el = $("labMsg"); if (el) el.innerHTML = t; };
+  try {
+    if (file.type.startsWith("image/")) {
+      state.labText = "";
+      go(3);
+      msg("📷 Photo received. Automatic reading of photographed reports needs the vision backend — please type the key values below.");
+      return;
+    }
+    msg('<span class="loader"><span class="dot"></span>Reading report…</span>');
+    state.labText = file.type === "application/pdf" || /\.pdf$/i.test(file.name) ? await pdfText(file) : await file.text();
+    await parseLabsWhenReady();
+    go(3);
+    const n = Object.keys(state.labValues).length;
+    msg(n ? `✅ Found ${n} lab values — check them below.` : "No known markers found in this file — type the values below.");
+  } catch (err) {
+    msg(`<span class="err">Could not read this file (${esc(err.message)}). Please type the values below.</span>`);
+  }
+}
+
+// ------------------------------------------------------------------ analyze
+document.addEventListener("click", async (e) => {
+  const t = e.target.closest("#nextBtn");
+  if (!t) return;
+  const target = +t.dataset.go;
+  if (target !== 4) return go(target);
+  if (!state.meals.some((m) => m.items.length)) { alert("Add at least one meal with foods first."); return go(2); }
+  t.disabled = true;
+  t.textContent = "Analyzing…";
+  await engineReady;
+  const payload = { profile: state.profile, meals: state.meals.map((m) => ({ name: m.name, items: m.items })),
+    lab_text: state.noLabs ? "" : state.labText, lab_values: state.noLabs ? {} : state.labValues };
+  const res = JSON.parse(api.analyze(JSON.stringify(payload)));
+  if (res.errors) { t.disabled = false; t.textContent = "✨ Analyze my nutrition"; alert(res.errors.join("\n")); return; }
+  state.report = res;
+  go(4);
 });
 
-$("download").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify(lastProfile, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "profile.json";
-  a.click();
-  URL.revokeObjectURL(a.href);
+// ------------------------------------------------------------------ step 4: results
+function scoreBand(score) {
+  return score >= 85 ? ["Great", "var(--good)"] : score >= 70 ? ["Fair", "var(--warning)"] : score >= 50 ? ["Needs work", "var(--serious)"] : ["Poor", "var(--critical)"];
+}
+
+function barRow(r, isLimit) {
+  const s = STATUS[r.status];
+  const width = Math.min(r.pct, 150) / 150 * 100;
+  const lab = r.lab_label ? `<span class="labtag">🧪 ${esc(r.lab_label)} ${fmt(r.lab_value)} ${esc(r.lab_unit)}</span>` : "";
+  const goal = isLimit ? `limit ${fmt(r.target)} ${r.unit}` : `RDA ${fmt(r.target)} ${r.unit}`;
+  return `<div class="bar-row" tabindex="0" data-tip="${esc(r.key)}" data-kind="${isLimit ? "limit" : "nutrient"}">
+    <div class="name">${esc(r.label)}<small>${fmt(r.intake)} / ${goal}</small></div>
+    <div class="track" aria-hidden="true"><div class="fill" data-w="${width}" style="background:${s.color}"></div><div class="mark100" style="left:${100 / 1.5}%"></div></div>
+    <div class="right"><span class="st"><i style="background:${s.color}"></i>${s.icon} ${s.label}</span> · <b>${Math.round(r.pct)}%</b><br>${lab}</div>
+    ${r.insight ? `<div class="insight">💡 ${esc(r.insight)}</div>` : ""}
+  </div>`;
+}
+
+function renderResults(v) {
+  const r = state.report;
+  const [band, bandColor] = scoreBand(r.score);
+  const crit = r.gaps.filter((g) => g.status === "deficient").length;
+  const nGaps = r.gaps.length, nEx = r.excesses.filter((x) => x.status === "excess").length;
+  const name = boot.personas.find((p) => p.id === state.persona)?.name;
+  const C = 2 * Math.PI * 70;
+  const allRows = [...r.nutrients].sort((a, b) => a.pct - b.pct);
+  const labHtml = r.lab_findings.length ? `<div class="table-scroll"><table><thead><tr><th>Marker</th><th class="num">Value</th><th>Status</th><th>What it means</th></tr></thead><tbody>
+      ${r.lab_findings.map((f) => `<tr><td><b>${esc(f.label)}</b></td><td class="num">${fmt(f.value)} ${esc(f.unit)}</td><td><span class="st"><i style="background:${STATUS[f.status].color}"></i>${STATUS[f.status].label === "Over limit" ? "High" : STATUS[f.status].label}</span></td><td class="muted">${esc(f.note)}</td></tr>`).join("")}
+    </tbody></table></div>` : `<p class="muted">No lab results provided — gaps are based on diet only.</p>`;
+
+  v.innerHTML = `<div class="results">
+    <section class="panel hero-card">
+      <div class="ring" role="img" aria-label="Nutrition score ${r.score} out of 100">
+        <svg width="168" height="168" viewBox="0 0 168 168"><circle cx="84" cy="84" r="70" fill="none" stroke="var(--track)" stroke-width="14"/>
+        <circle class="prog" cx="84" cy="84" r="70" fill="none" stroke="${bandColor}" stroke-width="14" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-off="${C * (1 - r.score / 100)}"/></svg>
+        <div class="val"><div><b id="scoreNum">0</b><small>Nutrition score<br><b style="font-size:.8rem;letter-spacing:0;color:var(--text)">${band}</b></small></div></div>
+      </div>
+      <div>
+        <p class="summary"><b>${name ? esc(name) + ", " : ""}${flag(r.country.id)} ${esc(r.country.name)}</b> — ${nGaps ? `<b>${nGaps} nutrition gap${nGaps > 1 ? "s" : ""}</b> found${crit ? `, <b style="color:var(--critical)">${crit} deficient</b>` : ""}` : "no nutrient gaps found"}${nEx ? ` and <b>${nEx} over the limit</b>` : ""}. ${r.supplements.length ? `${r.supplements.length} supplement${r.supplements.length > 1 ? "s" : ""} suggested.` : "No supplements needed."}</p>
+        <div class="kpis">
+          <div class="kpi"><div class="k">Energy</div><div class="v">${fmt(r.energy.intake)} <span class="muted" style="font-size:.8rem">/ ${r.energy.target ? fmt(r.energy.target) : "–"} kcal</span></div></div>
+          <div class="kpi"><div class="k">Protein</div><div class="v">${fmt(r.macros.protein)} g</div></div>
+          <div class="kpi"><div class="k">Gaps vs RDA</div><div class="v">${nGaps}</div></div>
+          <div class="kpi"><div class="k">Lab markers</div><div class="v">${r.lab_findings.length}</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="card-head"><h3>🎯 Your nutrition gaps</h3>
+        <div class="legend">${["deficient", "low", "borderline", "adequate"].map((k) => `<span><i style="background:${STATUS[k].color}"></i>${STATUS[k].icon} ${STATUS[k].label}</span>`).join("")}<span>│ line = 100% of RDA</span>
+        <button class="btn ghost small no-print" id="tableToggle">${state.tableView ? "Chart view" : "Table view"}</button></div></div>
+      <div id="gapChart" class="bars ${state.tableView ? "hidden" : ""}">${allRows.map((x) => barRow(x, false)).join("")}</div>
+      <div id="gapTable" class="table-scroll ${state.tableView ? "" : "hidden"}"><table><thead><tr><th>Nutrient</th><th class="num">Intake</th><th class="num">RDA</th><th class="num">% RDA</th><th>Status</th><th>Lab</th></tr></thead><tbody>
+        ${allRows.map((x) => `<tr><td>${esc(x.label)}</td><td class="num">${fmt(x.intake)} ${x.unit}</td><td class="num">${fmt(x.target)} ${x.unit}</td><td class="num">${Math.round(x.pct)}%</td><td>${STATUS[x.status].label}</td><td>${x.lab_label ? `${esc(x.lab_label)} ${fmt(x.lab_value)} ${esc(x.lab_unit)}` : "–"}</td></tr>`).join("")}
+      </tbody></table></div>
+      <div class="section-title">Limits (WHO)</div>
+      <div class="bars">${r.limits.map((x) => barRow(x, true)).join("")}</div>
+    </section>
+
+    <section class="panel">
+      <div class="card-head"><h3>💊 Supplements required</h3><span class="note">Confirm doses with your doctor</span></div>
+      ${r.supplements.length ? `<div class="cards3">${r.supplements.map((s) => `
+        <article class="supp" style="--pc:${PRIORITY[s.priority].color}">
+          <div class="top"><h4>${esc(s.name)}</h4><span class="prio">${PRIORITY[s.priority].label}</span></div>
+          <div class="dose">${esc(s.dose)}</div><div class="note">${esc(s.form)}</div>
+          <ul>${s.reasons.map((x) => `<li>${esc(x)}</li>`).join("")}${s.tips.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+          <div class="caution">⚠️ ${esc(s.caution)}</div>
+        </article>`).join("")}</div>` : `<p class="muted">🎉 No supplements needed — your diet covers the RDA. Keep it up!</p>`}
+    </section>
+
+    <section class="panel">
+      <div class="card-head"><h3>${flag(r.country.id)} Eat more of these — foods from ${esc(r.country.name)}</h3><span class="note">Picked for your gaps, diet and allergies</span></div>
+      ${r.food_recommendations.length ? `<div class="cards3">${r.food_recommendations.map((f) => `
+        <article class="food"><div class="em">${f.emoji}</div><div><h4>${esc(f.name)}${f.local ? `<span class="local">local</span>` : ""}</h4><div class="sv">per ${esc(f.serving)}</div>
+        ${f.boosts.map((b) => `<span class="boost">+${fmt(b.amount)} ${esc(b.unit)} ${esc(b.label)} · ${b.pct_rda}%</span>`).join("")}</div></article>`).join("")}</div>` : `<p class="muted">No gaps to close.</p>`}
+      ${r.swaps.length ? `<div class="section-title">🔁 Healthier swaps for ${esc(r.country.name)}</div><div class="chips">${r.swaps.map((s) => `<span class="chip" style="cursor:default">${esc(s)}</span>`).join("")}</div>` : ""}
+      <p class="note" style="margin-top:12px">National guideline: ${esc(r.country.guideline)}</p>
+    </section>
+
+    <section class="panel">
+      <div class="card-head"><h3>🧪 Lab findings</h3></div>
+      ${labHtml}
+    </section>
+
+    <section class="panel">
+      <p class="disclaimer">⚕️ ${esc(r.disclaimer)}</p>
+      <div class="nav no-print" style="margin-top:12px">
+        <button class="btn ghost" data-go="2">← Edit meals</button>
+        <span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn ghost" id="dlJson">Download data</button><button class="btn" id="printBtn">🖨 Save report as PDF</button></span>
+      </div>
+    </section>
+  </div>`;
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    v.querySelectorAll(".fill").forEach((el) => (el.style.width = el.dataset.w + "%"));
+    const ring = v.querySelector("circle.prog");
+    ring.style.strokeDashoffset = ring.dataset.off;
+  }));
+  const start = performance.now();
+  const tick = (now) => { const k = Math.min(1, (now - start) / 1300); $("scoreNum").textContent = Math.round(r.score * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+
+  $("tableToggle").addEventListener("click", () => { state.tableView = !state.tableView; go(4); });
+  $("printBtn").addEventListener("click", () => window.print());
+  $("dlJson").addEventListener("click", () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify({ input: { profile: state.profile, meals: state.meals.map((m) => ({ name: m.name, items: m.items })), lab_values: state.labValues }, report: r }, null, 2)], { type: "application/json" }));
+    a.download = "nutriscan_report.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+}
+
+// Tooltip for gap bars (hover and keyboard focus).
+const tip = $("tip");
+function showTip(row, x, y) {
+  const r = state.report;
+  const d = [...r.nutrients, ...r.limits].find((n) => n.key === row.dataset.tip);
+  if (!d) return;
+  const src = d.sources.length ? d.sources.map((s) => `${esc(s.food)}: ${fmt(s.amount)} ${d.unit}`).join("<br>") : "No significant sources in these meals";
+  tip.innerHTML = `<b>${esc(d.label)} — ${Math.round(d.pct)}% of ${d.kind === "limit" ? "limit" : "RDA"}</b>${fmt(d.intake)} of ${fmt(d.target)} ${d.unit}<br><span class="muted">Top sources:</span><br>${src}${d.lab_note ? `<br><span class="muted">Lab:</span> ${esc(d.lab_note)}` : ""}`;
+  const w = 280;
+  tip.style.left = Math.min(x + 14, innerWidth - w - 10) + "px";
+  tip.style.top = Math.min(y + 14, innerHeight - tip.offsetHeight - 10) + "px";
+  tip.classList.add("show");
+}
+document.addEventListener("mousemove", (e) => { const row = e.target.closest?.(".bar-row"); if (row) showTip(row, e.clientX, e.clientY); else tip.classList.remove("show"); });
+document.addEventListener("focusin", (e) => { const row = e.target.closest?.(".bar-row"); if (row) { const b = row.getBoundingClientRect(); showTip(row, b.left + 40, b.bottom - 6); } else tip.classList.remove("show"); });
+
+// Theme toggle (remembered per browser).
+const savedTheme = (() => { try { return localStorage.getItem("nutriscan-theme"); } catch { return null; } })();
+if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+$("theme").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("nutriscan-theme", next); } catch {}
 });
 
-boot();
+// ------------------------------------------------------------------ init
+(async () => {
+  engineReady = startEngine().catch((err) => { $("engine").innerHTML = `<span class="err">Engine failed: ${esc(err.message)}</span>`; throw err; });
+  boot = await (await fetch("bootstrap.json")).json();
+  $("reviewed").textContent = boot.last_reviewed;
+  renderPersonas();
+  loadPersona(params.get("persona") || boot.personas[0].id, false);
+})();
 </script>
 </body>
 </html>

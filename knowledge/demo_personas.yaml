@@ -1,0 +1,77 @@
+# Demo personas: default values so the analyzer can be demonstrated without
+# real photos or lab reports. Each meal is a "photo" whose detected foods are
+# pre-filled (servings are multiples of the food's standard serving).
+# lab_report is plain text in the format a typical lab printout uses; it is
+# parsed by the same code that reads uploaded reports.
+
+personas:
+  - id: priya
+    name: Priya
+    tagline: "32 · India · vegetarian · tired, hair fall"
+    profile: {country: india, age: 32, sex: female, weight_kg: 58, height_cm: 158, activity_level: light, life_stage: none, dietary_pattern: vegetarian_lacto_ovo, allergies: []}
+    meals:
+      - {name: Breakfast, items: [{food: idli, servings: 1}, {food: dal, servings: 0.5}, {food: chai, servings: 1}]}
+      - {name: Lunch, items: [{food: white_rice, servings: 1.5}, {food: dal, servings: 1}, {food: mixed_veg_curry, servings: 1}, {food: curd, servings: 0.5}]}
+      - {name: Evening snack, items: [{food: samosa, servings: 1}, {food: chai, servings: 1}]}
+      - {name: Dinner, items: [{food: roti, servings: 2}, {food: mixed_veg_curry, servings: 1}]}
+    lab_report: |
+      CITY DIAGNOSTICS - Complete Blood & Vitamin Panel
+      Patient: Priya S.   Age/Sex: 32/F
+      Hemoglobin            10.8   g/dL     12.0 - 15.5
+      Serum Ferritin         9     ng/mL    15 - 150
+      25-OH Vitamin D       14     ng/mL    30 - 100
+      Vitamin B12          182     pg/mL    200 - 900
+      HbA1c                  5.6   %        < 5.7
+      LDL Cholesterol      118     mg/dL    < 130
+      TSH                    2.1   mIU/L    0.4 - 4.5
+
+  - id: james
+    name: James
+    tagline: "45 · United States · desk job · prediabetes"
+    profile: {country: united_states, age: 45, sex: male, weight_kg: 95, height_cm: 178, activity_level: sedentary, life_stage: none, dietary_pattern: omnivore, allergies: []}
+    meals:
+      - {name: Breakfast, items: [{food: coffee_milk_sugar, servings: 2}, {food: biscuits, servings: 1}]}
+      - {name: Lunch, items: [{food: burger, servings: 1}, {food: fries, servings: 1}, {food: soft_drink, servings: 1}]}
+      - {name: Dinner, items: [{food: pizza, servings: 3}, {food: soft_drink, servings: 1}]}
+    lab_report: |
+      QUEST-STYLE LAB REPORT
+      Patient: James R.  45 M
+      HbA1c                    6.1  %       4.0-5.6
+      Fasting Glucose          108  mg/dL   70-99
+      LDL-C                    152  mg/dL   <100
+      Triglycerides            210  mg/dL   <150
+      Vitamin D, 25-OH          22  ng/mL   30-100
+      Ferritin                 180  ng/mL   30-400
+      Vitamin B12              450  pg/mL   200-900
+
+  - id: amara
+    name: Amara
+    tagline: "27 · Nigeria · pregnant (2nd trimester)"
+    profile: {country: nigeria, age: 27, sex: female, weight_kg: 64, height_cm: 165, activity_level: moderate, life_stage: pregnant_t2, dietary_pattern: omnivore, allergies: []}
+    meals:
+      - {name: Breakfast, items: [{food: maize_porridge, servings: 1}, {food: mandazi, servings: 1}, {food: chai, servings: 1}]}
+      - {name: Lunch, items: [{food: jollof, servings: 1.5}, {food: plantain, servings: 0.5}]}
+      - {name: Dinner, items: [{food: fufu, servings: 1}, {food: egusi_soup, servings: 1}]}
+    lab_report: |
+      ANTENATAL PROFILE - Lagos Medical Laboratory
+      Haemoglobin           10.2 g/dL
+      Ferritin              12 ng/mL
+      Serum Folate          5.2 ng/mL
+      Vitamin D (25-OH)     26 ng/mL
+      Fasting Blood Sugar   86 mg/dL
+
+  - id: hiroshi
+    name: Hiroshi
+    tagline: "74 · Japan · retired · bone health"
+    profile: {country: japan, age: 74, sex: male, weight_kg: 60, height_cm: 165, activity_level: light, life_stage: none, dietary_pattern: omnivore, allergies: []}
+    meals:
+      - {name: Breakfast, items: [{food: white_rice, servings: 1}, {food: miso_soup, servings: 1}, {food: egg, servings: 1}]}
+      - {name: Lunch, items: [{food: ramen, servings: 1}]}
+      - {name: Dinner, items: [{food: white_rice, servings: 1}, {food: salmon, servings: 1}, {food: bok_choy, servings: 1}, {food: miso_soup, servings: 1}]}
+    lab_report: |
+      Health check results
+      Vitamin D (25-OH)   18 ng/mL
+      Vitamin B12        260 pg/mL
+      Albumin            3.6 g/dL
+      HbA1c              5.9 %
+      Calcium            9.1 mg/dL

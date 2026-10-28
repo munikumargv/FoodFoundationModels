@@ -1,0 +1,229 @@
+# Food composition table used to turn meal photos into nutrient intake.
+#
+# Values are APPROXIMATE per stated serving, compiled from USDA FoodData Central
+# and national tables (e.g. Indian Food Composition Tables) for typical home
+# recipes. Recipes vary widely; treat results as estimates for screening, not
+# clinical assessment. Replace with a validated national database for
+# production.
+#
+# Keys per food:
+#   diet:      vegan | vegetarian (dairy/egg) | pescatarian (fish/seafood) | meat
+#   allergens: milk, egg, fish_shellfish, wheat, peanut, tree_nut, soy, sesame
+#   countries: country ids from countries.yaml where the food is typical, or [global]
+#   keywords:  words matched against photo file names / vision-model labels
+#   n:         nutrients per serving - kcal, protein g, carbs g, fat g, sat_fat g,
+#              fibre g, free_sugar g (added sugars + juice, WHO definition),
+#              sodium mg, calcium mg, iron mg, zinc mg, vit_a mcg RAE, vit_c mg,
+#              vit_d IU, b12 mcg, folate mcg DFE (missing = 0)
+
+last_reviewed: "2026-10"
+
+foods:
+  # ---------------- grains & staples ----------------
+  - {id: white_rice, name: "Steamed white rice", serving: "1 cup cooked", grams: 158, emoji: "🍚", diet: vegan, allergens: [], countries: [global], keywords: [rice, chawal, bhat, nasi, gohan, arroz],
+     n: {kcal: 205, protein: 4.3, carbs: 45, fat: 0.4, sat_fat: 0.1, fibre: 0.6, sodium: 2, calcium: 16, iron: 0.3, zinc: 0.8, folate: 5}}
+  - {id: brown_rice, name: "Brown rice", serving: "1 cup cooked", grams: 195, emoji: "🍚", diet: vegan, allergens: [], countries: [global], keywords: [brown rice, red rice],
+     n: {kcal: 218, protein: 4.5, carbs: 46, fat: 1.6, sat_fat: 0.3, fibre: 3.5, sodium: 2, calcium: 20, iron: 0.8, zinc: 1.2, folate: 8}}
+  - {id: roti, name: "Whole-wheat roti / chapati", serving: "1 piece", grams: 40, emoji: "🫓", diet: vegan, allergens: [wheat], countries: [india, pakistan, bangladesh], keywords: [roti, chapati, phulka],
+     n: {kcal: 104, protein: 3, carbs: 18, fat: 2.5, sat_fat: 0.5, fibre: 2.5, sodium: 80, calcium: 10, iron: 1.0, zinc: 0.6, folate: 15}}
+  - {id: naan, name: "Naan", serving: "1 piece", grams: 90, emoji: "🫓", diet: vegetarian, allergens: [wheat, milk], countries: [india, pakistan, iran], keywords: [naan, nan],
+     n: {kcal: 262, protein: 8.7, carbs: 45, fat: 5, sat_fat: 1.3, fibre: 2, free_sugar: 3, sodium: 418, calcium: 76, iron: 2.9, zinc: 0.6, folate: 40}}
+  - {id: white_bread, name: "White bread", serving: "2 slices", grams: 60, emoji: "🍞", diet: vegan, allergens: [wheat], countries: [global], keywords: [bread, toast, sandwich, pandesal, baladi],
+     n: {kcal: 160, protein: 5.5, carbs: 30, fat: 2, sat_fat: 0.4, fibre: 1.6, free_sugar: 3, sodium: 290, calcium: 90, iron: 2.0, zinc: 0.5, folate: 60}}
+  - {id: wholegrain_bread, name: "Whole-grain / rye bread", serving: "2 slices", grams: 64, emoji: "🍞", diet: vegan, allergens: [wheat], countries: [germany, russia, united_kingdom, france, united_states], keywords: [rye, wholegrain, wholemeal, brown bread, vollkorn],
+     n: {kcal: 160, protein: 8, carbs: 28, fat: 2.2, sat_fat: 0.4, fibre: 4, free_sugar: 2, sodium: 290, calcium: 80, iron: 1.6, zinc: 1.1, folate: 30}}
+  - {id: pasta, name: "Pasta", serving: "1 cup cooked", grams: 140, emoji: "🍝", diet: vegan, allergens: [wheat], countries: [italy, global], keywords: [pasta, spaghetti, penne, macaroni],
+     n: {kcal: 220, protein: 8, carbs: 43, fat: 1.3, sat_fat: 0.3, fibre: 2.5, sodium: 1, calcium: 10, iron: 1.0, zinc: 0.7, folate: 10}}
+  - {id: maize_porridge, name: "Maize porridge (ugali / pap / sadza)", serving: "1 cup", grams: 250, emoji: "🌽", diet: vegan, allergens: [], countries: [tanzania, south_africa, nigeria, dr_congo, ethiopia], keywords: [ugali, pap, sadza, nshima, maize, mealie],
+     n: {kcal: 275, protein: 6, carbs: 58, fat: 1.2, sat_fat: 0.2, fibre: 3, sodium: 5, calcium: 5, iron: 1.5, zinc: 1.0, folate: 20}}
+  - {id: corn_tortilla, name: "Corn tortillas", serving: "2 tortillas", grams: 52, emoji: "🌮", diet: vegan, allergens: [], countries: [mexico], keywords: [tortilla],
+     n: {kcal: 113, protein: 3, carbs: 24, fat: 1.5, sat_fat: 0.2, fibre: 3.3, sodium: 23, calcium: 92, iron: 0.6, zinc: 0.7, folate: 2}}
+  - {id: injera, name: "Teff injera", serving: "1 piece", grams: 150, emoji: "🫓", diet: vegan, allergens: [], countries: [ethiopia], keywords: [injera, teff],
+     n: {kcal: 195, protein: 6, carbs: 40, fat: 1, sat_fat: 0.2, fibre: 4, sodium: 15, calcium: 60, iron: 4.0, zinc: 1.5, folate: 20}}
+  - {id: fufu, name: "Cassava fufu / garri", serving: "1 cup", grams: 240, emoji: "⚪", diet: vegan, allergens: [], countries: [nigeria, dr_congo], keywords: [fufu, garri, eba, chikwangue, cassava],
+     n: {kcal: 330, protein: 1, carbs: 80, fat: 0.5, sat_fat: 0.1, fibre: 2, sodium: 10, calcium: 30, iron: 0.6, zinc: 0.3, vit_c: 10, folate: 20}}
+  - {id: idli, name: "Idli", serving: "2 pieces", grams: 80, emoji: "⚪", diet: vegan, allergens: [], countries: [india], keywords: [idli, idly],
+     n: {kcal: 116, protein: 4, carbs: 24, fat: 0.4, sat_fat: 0.1, fibre: 1.5, sodium: 260, calcium: 15, iron: 0.8, zinc: 0.4, folate: 10}}
+  - {id: dosa, name: "Plain dosa", serving: "1 dosa", grams: 85, emoji: "🥞", diet: vegan, allergens: [], countries: [india], keywords: [dosa, dosai],
+     n: {kcal: 168, protein: 3.9, carbs: 29, fat: 3.7, sat_fat: 0.6, fibre: 1, sodium: 300, calcium: 10, iron: 0.8, zinc: 0.4, folate: 10}}
+  - {id: instant_noodles, name: "Instant noodles", serving: "1 pack", grams: 85, emoji: "🍜", diet: vegan, allergens: [wheat], countries: [indonesia, philippines, vietnam, china, global], keywords: [instant noodles, indomie, maggi, ramen pack],
+     n: {kcal: 380, protein: 8, carbs: 52, fat: 14, sat_fat: 6.5, fibre: 2, free_sugar: 2, sodium: 1600, calcium: 20, iron: 3.5, zinc: 0.6}}
+  - {id: oats, name: "Oat porridge", serving: "1 cup cooked", grams: 234, emoji: "🥣", diet: vegan, allergens: [], countries: [global, united_kingdom, united_states, germany, russia], keywords: [oats, oatmeal, porridge, kasha oats],
+     n: {kcal: 166, protein: 6, carbs: 28, fat: 3.6, sat_fat: 0.6, fibre: 4, sodium: 9, calcium: 21, iron: 2.1, zinc: 2.3, folate: 14}}
+  - {id: potato, name: "Boiled potato", serving: "1 medium", grams: 170, emoji: "🥔", diet: vegan, allergens: [], countries: [global], keywords: [potato, aloo, kartoffel],
+     n: {kcal: 147, protein: 3.2, carbs: 34, fat: 0.2, fibre: 3, sodium: 10, calcium: 14, iron: 1.0, zinc: 0.5, vit_c: 15, folate: 17}}
+  - {id: buckwheat, name: "Buckwheat kasha", serving: "1 cup cooked", grams: 168, emoji: "🥣", diet: vegan, allergens: [], countries: [russia], keywords: [buckwheat, grechka, kasha],
+     n: {kcal: 155, protein: 5.7, carbs: 33, fat: 1, sat_fat: 0.2, fibre: 4.5, sodium: 7, calcium: 12, iron: 1.3, zinc: 1.0, folate: 24}}
+  - {id: bulgur, name: "Bulgur pilav", serving: "1 cup cooked", grams: 182, emoji: "🥣", diet: vegan, allergens: [wheat], countries: [turkey, iran, egypt], keywords: [bulgur, pilav, pilaf],
+     n: {kcal: 151, protein: 5.6, carbs: 34, fat: 0.4, fibre: 8, sodium: 9, calcium: 18, iron: 1.7, zinc: 1.0, folate: 33}}
+  - {id: sweet_potato, name: "Sweet potato", serving: "1 medium", grams: 114, emoji: "🍠", diet: vegan, allergens: [], countries: [nigeria, tanzania, japan, philippines, global], keywords: [sweet potato, camote, yam],
+     n: {kcal: 103, protein: 2.3, carbs: 24, fat: 0.2, fibre: 3.8, sodium: 41, calcium: 43, iron: 0.8, vit_a: 1096, vit_c: 22, folate: 7}}
+  - {id: plantain, name: "Boiled plantain", serving: "1 cup", grams: 154, emoji: "🍌", diet: vegan, allergens: [], countries: [nigeria, dr_congo, tanzania, brazil], keywords: [plantain, matoke, dodo],
+     n: {kcal: 179, protein: 1.2, carbs: 48, fat: 0.3, fibre: 3.5, sodium: 8, calcium: 3, iron: 0.9, vit_a: 69, vit_c: 8, folate: 40}}
+
+  # ---------------- legumes, soy, nuts ----------------
+  - {id: dal, name: "Dal (lentil curry)", serving: "1 bowl (150 g)", grams: 150, emoji: "🍲", diet: vegan, allergens: [], countries: [india, pakistan, bangladesh], keywords: [dal, daal, dhal, lentil, sambar],
+     n: {kcal: 150, protein: 9, carbs: 20, fat: 4, sat_fat: 1.5, fibre: 5, sodium: 350, calcium: 30, iron: 2.5, zinc: 1.2, vit_c: 3, folate: 120}}
+  - {id: chana_masala, name: "Chickpea curry (chana masala)", serving: "1 cup", grams: 200, emoji: "🍛", diet: vegan, allergens: [], countries: [india, pakistan, bangladesh, egypt, turkey], keywords: [chana, chickpea, chole, garbanzo],
+     n: {kcal: 270, protein: 12, carbs: 38, fat: 8, sat_fat: 1, fibre: 10, sodium: 500, calcium: 80, iron: 4.0, zinc: 2.0, vit_a: 30, vit_c: 5, folate: 250}}
+  - {id: rajma, name: "Kidney bean curry (rajma)", serving: "1 cup", grams: 200, emoji: "🍛", diet: vegan, allergens: [], countries: [india, pakistan], keywords: [rajma, kidney bean],
+     n: {kcal: 240, protein: 13, carbs: 35, fat: 6, sat_fat: 0.8, fibre: 11, sodium: 450, calcium: 60, iron: 4.0, zinc: 1.6, folate: 200}}
+  - {id: black_beans, name: "Black beans (feijão / frijoles)", serving: "1 cup cooked", grams: 172, emoji: "🫘", diet: vegan, allergens: [], countries: [brazil, mexico], keywords: [feijao, frijoles, black beans, beans],
+     n: {kcal: 227, protein: 15, carbs: 41, fat: 0.9, sat_fat: 0.2, fibre: 15, sodium: 300, calcium: 46, iron: 3.6, zinc: 1.9, folate: 256}}
+  - {id: ful_medames, name: "Ful medames (fava beans)", serving: "1 cup", grams: 250, emoji: "🫘", diet: vegan, allergens: [], countries: [egypt], keywords: [ful, foul, fava],
+     n: {kcal: 260, protein: 14, carbs: 34, fat: 8, sat_fat: 1.2, fibre: 10, sodium: 500, calcium: 80, iron: 3.8, zinc: 1.6, vit_c: 2, folate: 150}}
+  - {id: bean_stew, name: "Bean stew (ewa / maharagwe)", serving: "1 cup", grams: 220, emoji: "🫘", diet: vegan, allergens: [], countries: [nigeria, tanzania, dr_congo, ethiopia], keywords: [ewa, maharagwe, bean stew, moi moi, shiro],
+     n: {kcal: 250, protein: 13, carbs: 38, fat: 6, sat_fat: 2, fibre: 10, sodium: 400, calcium: 50, iron: 4.0, zinc: 2.0, vit_a: 150, folate: 200}}
+  - {id: tofu, name: "Tofu (calcium-set)", serving: "100 g", grams: 100, emoji: "🧈", diet: vegan, allergens: [soy], countries: [china, japan, vietnam, thailand, indonesia, philippines], keywords: [tofu, doufu, tokwa],
+     n: {kcal: 144, protein: 17, carbs: 3, fat: 9, sat_fat: 1.3, fibre: 2, sodium: 14, calcium: 680, iron: 2.7, zinc: 1.6, folate: 27}}
+  - {id: tempeh, name: "Tempeh", serving: "100 g", grams: 100, emoji: "🟫", diet: vegan, allergens: [soy], countries: [indonesia], keywords: [tempeh, tempe],
+     n: {kcal: 192, protein: 20, carbs: 8, fat: 11, sat_fat: 2.2, fibre: 5, sodium: 9, calcium: 111, iron: 2.7, zinc: 1.1, b12: 0.1, folate: 24}}
+  - {id: natto, name: "Natto", serving: "1 pack (50 g)", grams: 50, emoji: "🫘", diet: vegan, allergens: [soy], countries: [japan], keywords: [natto],
+     n: {kcal: 106, protein: 9, carbs: 7, fat: 5.5, sat_fat: 0.8, fibre: 2.7, sodium: 4, calcium: 109, iron: 4.3, zinc: 1.5, folate: 4}}
+  - {id: peanuts, name: "Peanuts / groundnuts", serving: "30 g", grams: 30, emoji: "🥜", diet: vegan, allergens: [peanut], countries: [nigeria, dr_congo, tanzania, indonesia, global], keywords: [peanut, groundnut],
+     n: {kcal: 170, protein: 7, carbs: 5, fat: 14, sat_fat: 2, fibre: 2.4, sodium: 5, calcium: 26, iron: 0.6, zinc: 1.0, folate: 72}}
+  - {id: almonds, name: "Almonds", serving: "30 g", grams: 30, emoji: "🌰", diet: vegan, allergens: [tree_nut], countries: [global, united_states, italy, iran], keywords: [almond, badam],
+     n: {kcal: 170, protein: 6, carbs: 6, fat: 15, sat_fat: 1.1, fibre: 3.5, calcium: 76, iron: 1.1, zinc: 0.9, folate: 13}}
+  - {id: walnuts, name: "Walnuts", serving: "30 g", grams: 30, emoji: "🌰", diet: vegan, allergens: [tree_nut], countries: [iran, turkey, global], keywords: [walnut],
+     n: {kcal: 185, protein: 4.3, carbs: 3.9, fat: 18.5, sat_fat: 1.7, fibre: 1.9, calcium: 29, iron: 0.9, zinc: 0.9, folate: 29}}
+  - {id: sesame_seeds, name: "Sesame seeds / til (unhulled)", serving: "1 tbsp (15 g)", grams: 15, emoji: "🌾", diet: vegan, allergens: [sesame], countries: [india, egypt, turkey, iran, nigeria, china], keywords: [sesame, til, tahini, gingelly],
+     n: {kcal: 89, protein: 2.6, carbs: 3, fat: 8, sat_fat: 1.1, fibre: 1.4, calcium: 146, iron: 2.2, zinc: 1.2, folate: 15}}
+  - {id: ragi, name: "Ragi (finger millet) mudde / porridge", serving: "1 cup", grams: 200, emoji: "🟤", diet: vegan, allergens: [], countries: [india, ethiopia, tanzania], keywords: [ragi, finger millet, nachni, mudde],
+     n: {kcal: 200, protein: 4.5, carbs: 43, fat: 1, sat_fat: 0.2, fibre: 6, sodium: 10, calcium: 210, iron: 2.5, zinc: 1.4, folate: 20}}
+
+  - {id: lentil_soup, name: "Lentil soup (lentilles / Linsensuppe / mercimek)", serving: "1 bowl", grams: 250, emoji: "🥣", diet: vegan, allergens: [], countries: [france, germany, italy, turkey, egypt, iran], keywords: [lentil soup, lentilles, linsen, mercimek, adas],
+     n: {kcal: 180, protein: 11, carbs: 28, fat: 3, sat_fat: 0.5, fibre: 9, sodium: 600, calcium: 40, iron: 3.5, zinc: 1.5, vit_a: 100, vit_c: 5, folate: 180}}
+  - {id: minestrone, name: "Minestrone (vegetable & bean soup)", serving: "1 bowl", grams: 250, emoji: "🍲", diet: vegan, allergens: [wheat], countries: [italy, france], keywords: [minestrone, pasta e fagioli, soupe au pistou],
+     n: {kcal: 130, protein: 5, carbs: 20, fat: 3, sat_fat: 0.5, fibre: 5, sodium: 700, calcium: 50, iron: 1.5, zinc: 0.6, vit_a: 200, vit_c: 10, folate: 50}}
+
+  # ---------------- eggs, dairy ----------------
+  - {id: egg, name: "Boiled egg", serving: "1 large", grams: 50, emoji: "🥚", diet: vegetarian, allergens: [egg], countries: [global], keywords: [egg, anda, huevo, telur],
+     n: {kcal: 78, protein: 6.3, carbs: 0.6, fat: 5.3, sat_fat: 1.6, sodium: 62, calcium: 25, iron: 0.6, zinc: 0.5, vit_a: 75, vit_d: 44, b12: 0.6, folate: 22}}
+  - {id: milk, name: "Milk, whole", serving: "1 cup", grams: 244, emoji: "🥛", diet: vegetarian, allergens: [milk], countries: [global], keywords: [milk, doodh, leche],
+     n: {kcal: 150, protein: 8, carbs: 12, fat: 8, sat_fat: 4.6, sodium: 105, calcium: 276, iron: 0.1, zinc: 1.0, vit_a: 112, vit_d: 50, b12: 1.1, folate: 12}}
+  - {id: fortified_soy_milk, name: "Fortified soy milk", serving: "1 cup", grams: 243, emoji: "🥛", diet: vegan, allergens: [soy], countries: [global], keywords: [soy milk, soya milk, plant milk],
+     n: {kcal: 105, protein: 6.3, carbs: 12, fat: 3.6, sat_fat: 0.5, fibre: 0.5, free_sugar: 6, sodium: 115, calcium: 300, iron: 1.0, zinc: 0.6, vit_a: 134, vit_d: 116, b12: 2.7, folate: 22}}
+  - {id: curd, name: "Yoghurt / curd (dahi)", serving: "1 cup", grams: 245, emoji: "🥣", diet: vegetarian, allergens: [milk], countries: [global], keywords: [curd, dahi, yoghurt, yogurt, mast, raita],
+     n: {kcal: 150, protein: 8.5, carbs: 11, fat: 8, sat_fat: 5, sodium: 113, calcium: 296, iron: 0.1, zinc: 1.4, vit_a: 66, vit_d: 5, b12: 0.9, folate: 17}}
+  - {id: greek_yoghurt, name: "Greek yoghurt / quark / skyr", serving: "170 g", grams: 170, emoji: "🥣", diet: vegetarian, allergens: [milk], countries: [united_states, germany, france, united_kingdom, russia, global], keywords: [greek yoghurt, greek yogurt, quark, skyr, tvorog],
+     n: {kcal: 146, protein: 20, carbs: 8, fat: 3.8, sat_fat: 2.5, sodium: 65, calcium: 190, zinc: 0.9, vit_a: 30, b12: 1.3, folate: 12}}
+  - {id: paneer, name: "Paneer", serving: "100 g", grams: 100, emoji: "🧀", diet: vegetarian, allergens: [milk], countries: [india, pakistan], keywords: [paneer, cottage cheese],
+     n: {kcal: 265, protein: 18, carbs: 3, fat: 21, sat_fat: 13, sodium: 30, calcium: 480, iron: 0.2, zinc: 2.7, vit_a: 200, b12: 0.8}}
+  - {id: cheese, name: "Cheese (hard)", serving: "30 g", grams: 30, emoji: "🧀", diet: vegetarian, allergens: [milk], countries: [global, france, italy, germany], keywords: [cheese, queso, fromage, kase],
+     n: {kcal: 120, protein: 7, carbs: 0.4, fat: 10, sat_fat: 6, sodium: 190, calcium: 210, zinc: 1.0, vit_a: 80, vit_d: 7, b12: 0.3}}
+  - {id: kefir, name: "Kefir", serving: "1 cup", grams: 243, emoji: "🥛", diet: vegetarian, allergens: [milk], countries: [russia, turkey, iran], keywords: [kefir, ayran, doogh],
+     n: {kcal: 150, protein: 9, carbs: 12, fat: 8, sat_fat: 5, sodium: 100, calcium: 300, zinc: 1.0, vit_a: 60, vit_d: 50, b12: 0.7, folate: 10}}
+
+  # ---------------- meat, fish ----------------
+  - {id: chicken_grilled, name: "Grilled chicken", serving: "100 g", grams: 100, emoji: "🍗", diet: meat, allergens: [], countries: [global], keywords: [grilled chicken, chicken breast, tikka, tandoori, inasal],
+     n: {kcal: 165, protein: 31, fat: 3.6, sat_fat: 1, sodium: 74, calcium: 15, iron: 1.0, zinc: 1.0, b12: 0.3, folate: 4}}
+  - {id: chicken_curry, name: "Chicken curry", serving: "1 cup", grams: 240, emoji: "🍛", diet: meat, allergens: [], countries: [india, pakistan, bangladesh, thailand, indonesia], keywords: [chicken curry, murgh, opor, kari],
+     n: {kcal: 300, protein: 25, carbs: 8, fat: 18, sat_fat: 5, fibre: 2, sodium: 700, calcium: 40, iron: 2.0, zinc: 2.0, vit_a: 60, vit_c: 8, b12: 0.4, folate: 20}}
+  - {id: beef, name: "Lean beef", serving: "100 g", grams: 100, emoji: "🥩", diet: meat, allergens: [], countries: [united_states, brazil, mexico, south_africa, global], keywords: [beef, steak, churrasco, braai],
+     n: {kcal: 250, protein: 26, fat: 15, sat_fat: 6, sodium: 60, calcium: 18, iron: 2.6, zinc: 6.0, b12: 2.5, folate: 8}}
+  - {id: pork, name: "Pork", serving: "100 g", grams: 100, emoji: "🍖", diet: meat, allergens: [], countries: [china, philippines, vietnam, germany, global], keywords: [pork, adobo, schnitzel],
+     n: {kcal: 240, protein: 27, fat: 14, sat_fat: 5, sodium: 60, calcium: 20, iron: 1.0, zinc: 2.5, b12: 0.7}}
+  - {id: lamb_curry, name: "Mutton / lamb curry", serving: "1 cup", grams: 240, emoji: "🍲", diet: meat, allergens: [], countries: [india, pakistan, iran, turkey, ethiopia], keywords: [mutton, lamb, gosht, khoresh],
+     n: {kcal: 350, protein: 26, carbs: 6, fat: 24, sat_fat: 9, sodium: 700, calcium: 35, iron: 3.0, zinc: 5.0, vit_a: 20, b12: 2.5}}
+  - {id: salmon, name: "Salmon / oily fish", serving: "100 g", grams: 100, emoji: "🐟", diet: pescatarian, allergens: [fish_shellfish], countries: [japan, united_kingdom, germany, france, russia, united_states, global], keywords: [salmon, mackerel, saba, oily fish],
+     n: {kcal: 206, protein: 22, fat: 12, sat_fat: 2.5, sodium: 60, calcium: 15, iron: 0.3, zinc: 0.4, vit_a: 15, vit_d: 520, b12: 3.2, folate: 25}}
+  - {id: fish_curry, name: "Fish curry", serving: "1 cup", grams: 240, emoji: "🐟", diet: pescatarian, allergens: [fish_shellfish], countries: [bangladesh, india, thailand, vietnam, philippines, nigeria], keywords: [fish curry, machher jhol, sinigang, fish stew],
+     n: {kcal: 220, protein: 22, carbs: 6, fat: 12, sat_fat: 2, sodium: 600, calcium: 60, iron: 1.2, zinc: 0.8, vit_a: 40, vit_c: 6, vit_d: 100, b12: 2.0, folate: 15}}
+  - {id: small_fish, name: "Small dried fish (anchovy / dagaa / mola)", serving: "30 g", grams: 30, emoji: "🐟", diet: pescatarian, allergens: [fish_shellfish], countries: [bangladesh, tanzania, indonesia, philippines, japan, nigeria], keywords: [anchovy, dagaa, dilis, teri, mola, crayfish],
+     n: {kcal: 100, protein: 18, fat: 2.5, sat_fat: 0.6, sodium: 400, calcium: 450, iron: 2.5, zinc: 1.5, vit_a: 20, vit_d: 50, b12: 3.0}}
+  - {id: sardines, name: "Sardines / pilchards (canned)", serving: "100 g", grams: 100, emoji: "🐟", diet: pescatarian, allergens: [fish_shellfish], countries: [south_africa, italy, france, global], keywords: [sardine, pilchard],
+     n: {kcal: 208, protein: 25, fat: 11, sat_fat: 1.5, sodium: 300, calcium: 380, iron: 2.9, zinc: 1.3, vit_a: 32, vit_d: 190, b12: 8.9, folate: 10}}
+  - {id: shrimp, name: "Shrimp / prawns", serving: "100 g", grams: 100, emoji: "🦐", diet: pescatarian, allergens: [fish_shellfish], countries: [thailand, vietnam, philippines, indonesia, global], keywords: [shrimp, prawn, udang, tom],
+     n: {kcal: 99, protein: 24, fat: 0.3, sodium: 400, calcium: 70, iron: 0.5, zinc: 1.6, b12: 1.1}}
+
+  # ---------------- vegetables & fruit ----------------
+  - {id: spinach, name: "Cooked spinach / palak", serving: "1 cup", grams: 180, emoji: "🥬", diet: vegan, allergens: [], countries: [india, pakistan, global], keywords: [spinach, palak, saag, bayam, horenso],
+     n: {kcal: 41, protein: 5.3, carbs: 7, fat: 0.5, fibre: 4.3, sodium: 126, calcium: 245, iron: 6.4, zinc: 1.4, vit_a: 943, vit_c: 18, folate: 263}}
+  - {id: leafy_greens, name: "Leafy greens (kale, sukuma, morogo, ugwu)", serving: "1 cup cooked", grams: 130, emoji: "🥬", diet: vegan, allergens: [], countries: [tanzania, nigeria, south_africa, dr_congo, ethiopia, brazil, global], keywords: [kale, sukuma, morogo, ugwu, gomen, couve, cassava leaves, pondu, mchicha],
+     n: {kcal: 36, protein: 2.5, carbs: 7, fat: 0.5, fibre: 2.6, sodium: 30, calcium: 94, iron: 1.2, zinc: 0.3, vit_a: 885, vit_c: 53, folate: 17}}
+  - {id: bok_choy, name: "Bok choy / komatsuna", serving: "1 cup cooked", grams: 170, emoji: "🥬", diet: vegan, allergens: [], countries: [china, japan, vietnam, thailand], keywords: [bok choy, pak choi, komatsuna, choy sum],
+     n: {kcal: 20, protein: 2.7, carbs: 3, fat: 0.3, fibre: 1.7, sodium: 58, calcium: 158, iron: 1.8, zinc: 0.3, vit_a: 360, vit_c: 44, folate: 70}}
+  - {id: mixed_veg_curry, name: "Mixed vegetable curry / sabzi", serving: "1 cup", grams: 150, emoji: "🥘", diet: vegan, allergens: [], countries: [india, pakistan, bangladesh], keywords: [sabzi, bhaji, vegetable curry, mixed veg],
+     n: {kcal: 120, protein: 3, carbs: 12, fat: 7, sat_fat: 1, fibre: 4, sodium: 400, calcium: 50, iron: 1.2, zinc: 0.5, vit_a: 200, vit_c: 25, folate: 40}}
+  - {id: stir_fry_veg, name: "Stir-fried vegetables", serving: "1 cup", grams: 150, emoji: "🥦", diet: vegan, allergens: [soy], countries: [china, vietnam, thailand, indonesia, philippines], keywords: [stir fry, stir-fried, cap cay, chop suey],
+     n: {kcal: 100, protein: 3, carbs: 10, fat: 6, sat_fat: 0.8, fibre: 3, sodium: 450, calcium: 60, iron: 1.0, zinc: 0.4, vit_a: 250, vit_c: 40, folate: 50}}
+  - {id: broccoli, name: "Broccoli", serving: "1 cup cooked", grams: 156, emoji: "🥦", diet: vegan, allergens: [], countries: [global, united_states, united_kingdom, italy, france], keywords: [broccoli],
+     n: {kcal: 55, protein: 3.7, carbs: 11, fat: 0.6, fibre: 5.1, sodium: 64, calcium: 62, iron: 1.0, zinc: 0.7, vit_a: 120, vit_c: 101, folate: 168}}
+  - {id: salad, name: "Green salad (lettuce, tomato, cucumber)", serving: "1 bowl", grams: 150, emoji: "🥗", diet: vegan, allergens: [], countries: [global], keywords: [salad, kachumber, ensalada],
+     n: {kcal: 25, protein: 1.3, carbs: 5, fat: 0.2, fibre: 1.8, sodium: 15, calcium: 25, iron: 0.6, zinc: 0.2, vit_a: 120, vit_c: 15, folate: 50}}
+  - {id: carrot, name: "Carrot", serving: "1 medium", grams: 61, emoji: "🥕", diet: vegan, allergens: [], countries: [global], keywords: [carrot, gajar],
+     n: {kcal: 25, protein: 0.6, carbs: 6, fat: 0.1, fibre: 1.7, sodium: 42, calcium: 20, iron: 0.2, vit_a: 509, vit_c: 3.6, folate: 12}}
+  - {id: miso_soup, name: "Miso soup", serving: "1 bowl", grams: 240, emoji: "🍵", diet: vegan, allergens: [soy], countries: [japan], keywords: [miso],
+     n: {kcal: 40, protein: 3, carbs: 5, fat: 1.3, sat_fat: 0.2, fibre: 1, sodium: 750, calcium: 30, iron: 0.6, zinc: 0.4}}
+  - {id: borscht, name: "Borscht", serving: "1 bowl", grams: 300, emoji: "🥣", diet: vegetarian, allergens: [milk], countries: [russia], keywords: [borscht, borsch, shchi],
+     n: {kcal: 120, protein: 4, carbs: 15, fat: 5, sat_fat: 1.5, fibre: 3, sodium: 600, calcium: 40, iron: 1.0, zinc: 0.4, vit_a: 150, vit_c: 10, folate: 60}}
+  - {id: banana, name: "Banana", serving: "1 medium", grams: 118, emoji: "🍌", diet: vegan, allergens: [], countries: [global], keywords: [banana, kela, pisang],
+     n: {kcal: 105, protein: 1.3, carbs: 27, fat: 0.4, fibre: 3.1, sodium: 1, calcium: 6, iron: 0.3, vit_a: 4, vit_c: 10, folate: 24}}
+  - {id: orange, name: "Orange", serving: "1 medium", grams: 131, emoji: "🍊", diet: vegan, allergens: [], countries: [global], keywords: [orange, citrus, santra],
+     n: {kcal: 62, protein: 1.2, carbs: 15, fat: 0.2, fibre: 3.1, calcium: 52, iron: 0.1, vit_a: 14, vit_c: 70, folate: 40}}
+  - {id: guava, name: "Guava", serving: "1 fruit", grams: 55, emoji: "🍐", diet: vegan, allergens: [], countries: [india, mexico, thailand, philippines, indonesia, bangladesh, brazil], keywords: [guava, amrood, bayabas],
+     n: {kcal: 37, protein: 1.4, carbs: 8, fat: 0.5, fibre: 3, calcium: 10, iron: 0.1, vit_a: 17, vit_c: 126, folate: 27}}
+  - {id: mango, name: "Mango", serving: "1 cup", grams: 165, emoji: "🥭", diet: vegan, allergens: [], countries: [india, pakistan, philippines, mexico, thailand, nigeria, global], keywords: [mango, aam],
+     n: {kcal: 99, protein: 1.4, carbs: 25, fat: 0.6, fibre: 2.6, calcium: 18, iron: 0.3, vit_a: 89, vit_c: 60, folate: 71}}
+  - {id: papaya, name: "Papaya", serving: "1 cup", grams: 145, emoji: "🍈", diet: vegan, allergens: [], countries: [india, brazil, mexico, thailand, vietnam, nigeria, global], keywords: [papaya, papita],
+     n: {kcal: 62, protein: 0.7, carbs: 16, fat: 0.4, fibre: 2.5, calcium: 29, iron: 0.4, vit_a: 68, vit_c: 88, folate: 54}}
+  - {id: apple, name: "Apple", serving: "1 medium", grams: 182, emoji: "🍎", diet: vegan, allergens: [], countries: [global, germany, france, united_kingdom, russia, china, iran, turkey], keywords: [apple],
+     n: {kcal: 95, protein: 0.5, carbs: 25, fat: 0.3, fibre: 4.4, calcium: 11, iron: 0.2, vit_a: 5, vit_c: 8.4, folate: 5}}
+  - {id: dates, name: "Dates", serving: "3 dates", grams: 24, emoji: "🌴", diet: vegan, allergens: [], countries: [egypt, iran, pakistan, turkey], keywords: [dates, khajur, tamr],
+     n: {kcal: 66, protein: 0.6, carbs: 18, fibre: 1.6, calcium: 15, iron: 0.2}}
+  - {id: avocado, name: "Avocado", serving: "1/2 fruit", grams: 100, emoji: "🥑", diet: vegan, allergens: [], countries: [mexico, brazil, united_states, global], keywords: [avocado, guacamole],
+     n: {kcal: 160, protein: 2, carbs: 8.5, fat: 15, sat_fat: 2.1, fibre: 6.7, sodium: 7, calcium: 12, iron: 0.6, zinc: 0.6, vit_a: 7, vit_c: 10, folate: 81}}
+
+  # ---------------- mixed dishes ----------------
+  - {id: biryani, name: "Chicken biryani", serving: "1 plate", grams: 350, emoji: "🍛", diet: meat, allergens: [milk], countries: [india, pakistan, bangladesh], keywords: [biryani, pulao],
+     n: {kcal: 600, protein: 28, carbs: 75, fat: 20, sat_fat: 6, fibre: 3, sodium: 1100, calcium: 70, iron: 2.5, zinc: 3.0, vit_a: 60, vit_c: 8, b12: 0.5, folate: 30}}
+  - {id: jollof, name: "Jollof rice", serving: "1 cup", grams: 250, emoji: "🍛", diet: vegan, allergens: [], countries: [nigeria], keywords: [jollof],
+     n: {kcal: 350, protein: 6, carbs: 60, fat: 9, sat_fat: 2, fibre: 2, sodium: 650, calcium: 30, iron: 1.5, zinc: 1.0, vit_a: 120, vit_c: 12, folate: 15}}
+  - {id: egusi_soup, name: "Egusi soup with fish/meat", serving: "1 cup", grams: 250, emoji: "🍲", diet: meat, allergens: [fish_shellfish], countries: [nigeria], keywords: [egusi, efo, okra soup, ogbono],
+     n: {kcal: 400, protein: 20, carbs: 8, fat: 32, sat_fat: 10, fibre: 3, sodium: 700, calcium: 120, iron: 4.0, zinc: 3.0, vit_a: 300, vit_c: 15, b12: 1.0, folate: 60}}
+  - {id: nasi_goreng, name: "Fried rice (nasi goreng / chao fan)", serving: "1 plate", grams: 300, emoji: "🍳", diet: meat, allergens: [egg, soy], countries: [indonesia, china, philippines, thailand, vietnam], keywords: [fried rice, nasi goreng, chao fan, khao pad, sinangag],
+     n: {kcal: 550, protein: 18, carbs: 70, fat: 22, sat_fat: 4.5, fibre: 2.5, free_sugar: 4, sodium: 1300, calcium: 60, iron: 2.5, zinc: 2.0, vit_a: 80, vit_c: 6, b12: 0.6, folate: 40}}
+  - {id: pho, name: "Pho / beef noodle soup", serving: "1 bowl", grams: 600, emoji: "🍜", diet: meat, allergens: [], countries: [vietnam], keywords: [pho, bun bo],
+     n: {kcal: 450, protein: 30, carbs: 55, fat: 10, sat_fat: 3.5, fibre: 2, sodium: 1800, calcium: 60, iron: 3.5, zinc: 5.0, vit_a: 20, vit_c: 8, b12: 2.0, folate: 40}}
+  - {id: ramen, name: "Ramen", serving: "1 bowl", grams: 550, emoji: "🍜", diet: meat, allergens: [wheat, egg, soy], countries: [japan], keywords: [ramen],
+     n: {kcal: 500, protein: 20, carbs: 65, fat: 18, sat_fat: 6, fibre: 3, sodium: 2500, calcium: 50, iron: 2.0, zinc: 2.0, vit_a: 30, vit_c: 5, b12: 0.8, folate: 40}}
+  - {id: sushi, name: "Sushi (8 pieces)", serving: "8 pieces", grams: 280, emoji: "🍣", diet: pescatarian, allergens: [fish_shellfish, soy], countries: [japan], keywords: [sushi, nigiri, maki],
+     n: {kcal: 400, protein: 20, carbs: 65, fat: 6, sat_fat: 1.2, fibre: 1.5, free_sugar: 8, sodium: 700, calcium: 30, iron: 1.0, zinc: 1.5, vit_a: 40, vit_d: 150, b12: 1.5, folate: 30}}
+  - {id: tacos, name: "Beef tacos", serving: "2 tacos", grams: 200, emoji: "🌮", diet: meat, allergens: [milk], countries: [mexico], keywords: [taco, tacos],
+     n: {kcal: 400, protein: 20, carbs: 32, fat: 20, sat_fat: 8, fibre: 4, sodium: 700, calcium: 150, iron: 2.5, zinc: 4.0, vit_a: 40, vit_c: 5, b12: 1.5, folate: 30}}
+  - {id: koshari, name: "Koshari", serving: "1 plate", grams: 350, emoji: "🍲", diet: vegan, allergens: [wheat], countries: [egypt], keywords: [koshari, kushari],
+     n: {kcal: 550, protein: 18, carbs: 100, fat: 8, sat_fat: 1.2, fibre: 12, sodium: 900, calcium: 60, iron: 5.0, zinc: 2.5, vit_c: 6, folate: 150}}
+  - {id: kebab, name: "Grilled kebab (lamb)", serving: "2 skewers", grams: 120, emoji: "🍢", diet: meat, allergens: [], countries: [turkey, iran, pakistan, egypt], keywords: [kebab, kabab, seekh, kofta],
+     n: {kcal: 300, protein: 22, carbs: 4, fat: 22, sat_fat: 9, sodium: 600, calcium: 30, iron: 2.5, zinc: 4.5, b12: 2.4}}
+  - {id: adobo, name: "Chicken adobo", serving: "1 cup", grams: 220, emoji: "🍗", diet: meat, allergens: [soy], countries: [philippines], keywords: [adobo],
+     n: {kcal: 350, protein: 30, carbs: 4, fat: 23, sat_fat: 6.5, free_sugar: 2, sodium: 1100, calcium: 30, iron: 1.8, zinc: 2.5, b12: 0.4}}
+  - {id: shiro_wot, name: "Shiro wot (chickpea stew)", serving: "1 cup", grams: 220, emoji: "🍲", diet: vegan, allergens: [], countries: [ethiopia], keywords: [shiro, misir, wot],
+     n: {kcal: 220, protein: 11, carbs: 25, fat: 9, sat_fat: 1.5, fibre: 8, sodium: 500, calcium: 60, iron: 3.5, zinc: 1.6, vit_a: 40, vit_c: 4, folate: 120}}
+  - {id: rice_beans_plate, name: "Prato feito (rice, beans, meat, salad)", serving: "1 plate", grams: 450, emoji: "🍽️", diet: meat, allergens: [], countries: [brazil], keywords: [prato feito, arroz e feijao, pf],
+     n: {kcal: 750, protein: 38, carbs: 95, fat: 22, sat_fat: 7, fibre: 13, sodium: 1200, calcium: 90, iron: 6.0, zinc: 6.5, vit_a: 80, vit_c: 15, b12: 2.0, folate: 220}}
+
+  # ---------------- snacks, fast food, drinks, fats ----------------
+  - {id: samosa, name: "Samosa", serving: "1 piece", grams: 100, emoji: "🥟", diet: vegan, allergens: [wheat], countries: [india, pakistan, bangladesh, tanzania], keywords: [samosa, sambusa],
+     n: {kcal: 260, protein: 4, carbs: 28, fat: 15, sat_fat: 3, fibre: 2.5, sodium: 420, calcium: 25, iron: 1.2, zinc: 0.4, vit_a: 10, vit_c: 5, folate: 15}}
+  - {id: burger, name: "Beef burger", serving: "1 burger", grams: 220, emoji: "🍔", diet: meat, allergens: [wheat, milk, sesame], countries: [united_states, global], keywords: [burger, hamburger, cheeseburger],
+     n: {kcal: 540, protein: 25, carbs: 40, fat: 28, sat_fat: 10, fibre: 2, free_sugar: 8, sodium: 1000, calcium: 150, iron: 4.0, zinc: 4.5, vit_a: 50, vit_c: 2, b12: 2.0, folate: 80}}
+  - {id: fries, name: "French fries", serving: "medium", grams: 117, emoji: "🍟", diet: vegan, allergens: [], countries: [global], keywords: [fries, chips, frites],
+     n: {kcal: 365, protein: 4, carbs: 48, fat: 17, sat_fat: 2.5, fibre: 4.4, sodium: 246, calcium: 20, iron: 0.9, zinc: 0.6, vit_c: 6, folate: 33}}
+  - {id: pizza, name: "Pizza", serving: "1 slice", grams: 107, emoji: "🍕", diet: vegetarian, allergens: [wheat, milk], countries: [italy, global], keywords: [pizza],
+     n: {kcal: 285, protein: 12, carbs: 36, fat: 10, sat_fat: 4.5, fibre: 2.5, free_sugar: 3.8, sodium: 640, calcium: 200, iron: 2.5, zinc: 1.3, vit_a: 70, b12: 0.5, folate: 60}}
+  - {id: fried_chicken, name: "Fried chicken", serving: "1 piece", grams: 140, emoji: "🍗", diet: meat, allergens: [wheat], countries: [united_states, south_africa, global], keywords: [fried chicken, kfc],
+     n: {kcal: 380, protein: 30, carbs: 12, fat: 23, sat_fat: 6, sodium: 900, calcium: 30, iron: 1.5, zinc: 2.0, b12: 0.4}}
+  - {id: biscuits, name: "Biscuits / cookies", serving: "3 pieces", grams: 30, emoji: "🍪", diet: vegetarian, allergens: [wheat, milk], countries: [global], keywords: [biscuit, cookie],
+     n: {kcal: 145, protein: 2, carbs: 20, fat: 7, sat_fat: 3.5, fibre: 0.5, free_sugar: 9, sodium: 110, calcium: 10, iron: 0.8}}
+  - {id: mandazi, name: "Doughnut / mandazi / puff-puff", serving: "1 piece", grams: 70, emoji: "🍩", diet: vegetarian, allergens: [wheat, milk, egg], countries: [tanzania, nigeria, global], keywords: [mandazi, puff puff, donut, doughnut],
+     n: {kcal: 250, protein: 4, carbs: 30, fat: 13, sat_fat: 5, fibre: 1, free_sugar: 10, sodium: 200, calcium: 20, iron: 1.2}}
+  - {id: chai, name: "Tea with milk & sugar", serving: "1 cup", grams: 200, emoji: "☕", diet: vegetarian, allergens: [milk], countries: [india, pakistan, bangladesh, tanzania, united_kingdom, turkey, iran, egypt, global], keywords: [chai, tea, cha, shai],
+     n: {kcal: 80, protein: 2, carbs: 12, fat: 2.5, sat_fat: 1.5, free_sugar: 10, sodium: 25, calcium: 70, vit_a: 20, b12: 0.2}}
+  - {id: coffee_milk_sugar, name: "Coffee with milk & sugar", serving: "1 cup", grams: 240, emoji: "☕", diet: vegetarian, allergens: [milk], countries: [global], keywords: [coffee, latte, cafezinho, kopi],
+     n: {kcal: 70, protein: 2, carbs: 10, fat: 2.5, sat_fat: 1.5, free_sugar: 8, sodium: 30, calcium: 70, b12: 0.2}}
+  - {id: soft_drink, name: "Soft drink / soda", serving: "330 ml can", grams: 330, emoji: "🥤", diet: vegan, allergens: [], countries: [global], keywords: [soda, cola, coke, soft drink, pop],
+     n: {kcal: 140, carbs: 35, free_sugar: 35, sodium: 30}}
+  - {id: orange_juice, name: "Fruit juice", serving: "250 ml", grams: 250, emoji: "🧃", diet: vegan, allergens: [], countries: [global], keywords: [juice],
+     n: {kcal: 110, protein: 1.7, carbs: 26, fat: 0.5, free_sugar: 21, calcium: 25, iron: 0.5, vit_a: 10, vit_c: 80, folate: 45}}
+  - {id: ghee, name: "Ghee / butter", serving: "1 tbsp", grams: 14, emoji: "🧈", diet: vegetarian, allergens: [milk], countries: [india, pakistan, ethiopia, global], keywords: [ghee, butter, niter kibbeh],
+     n: {kcal: 112, fat: 12.7, sat_fat: 7.9, vit_a: 108}}

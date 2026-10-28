@@ -1,85 +1,137 @@
-# FoodFM — a nutrition-grounded open LLM
+# NutriScan — nutrition gap analyzer (FoodFM)
 
-FoodFM takes an **open-weight LLM** (Qwen, Llama, Mistral, Gemma, Phi — your choice) and customises it so it
-answers **only nutrition questions**, using:
+**Snap your meals, add your lab report, and see your nutrition gaps.**
 
-- **Nutrition standards**: WHO population goals, NASEM Dietary Reference Intakes (RDA/AI/AMDR), FAO/WHO/UNU
-  energy equations, ESPEN/PROT-AGE protein guidance for older adults.
-- **Food habits of the top 25 countries** (by population): staples, typical meals, national dietary
-  guideline, healthy traditions, public-health concerns, cultural/religious practices, local sources of
-  protein/iron/calcium/B12, and culturally familiar healthier swaps.
-- **Age**: infant, toddler, child, pre-teen, adolescent, adult, older adult, elderly, plus pregnancy (by
-  trimester) and breastfeeding.
-- **Other factors**: sex, activity level, dietary/religious pattern (vegetarian, vegan, halal, kosher, Jain,
-  Hindu, Buddhist, keto…), medical conditions (diabetes, hypertension, CKD, celiac, anaemia, PCOS, eating-disorder
-  history…), allergies, goal (weight loss/gain, muscle), budget, climate, lifestyle (smoking, alcohol, shift work),
-  and diet–drug interaction warnings.
-- **Interactive selection prompts**: the CLI asks you to pick the model, country, age, and every factor
-  from numbered menus.
+NutriScan takes a person's **country**, **food photos** and, optionally, a **lab report**. It produces:
 
-> ⚠️ FoodFM gives general, standards-based information. It is not a substitute for a doctor or registered
-> dietitian. Review the knowledge base against the latest guideline editions before any real-world use.
+1. **Clear nutrition gaps**: daily intake of 10 nutrients compared with the RDA for that person's age, sex and
+   life stage (WHO / NASEM), plus WHO limits for sodium, free sugars and saturated fat. Lab results confirm
+   or upgrade each gap; for example, low ferritin turns an iron shortfall into a confirmed deficiency.
+2. **Supplements required**, each with a dose, a priority, the reason (lab value or diet shortfall), tips and
+   safety cautions.
+3. **Food recommendations from the person's country** that close the gaps and respect their diet
+   (vegetarian, vegan, halal, kosher, Jain…) and allergies, plus healthier local swaps.
 
-## How the "nutrition-only" grounding works
+> ⚠️ NutriScan is a screening and education tool, not medical advice. Nutrient values are approximate, and
+> supplement suggestions should be confirmed with a doctor or registered dietitian.
 
-You can't make a pretrained LLM *forget* everything else, so FoodFM gets the same effect with four layers:
+**Live demo:** `https://<user>.github.io/FoodFoundationModels/`. It opens with demo personas, so it can be
+shown without real photos or reports.
 
-| Layer | What it does | Where |
+| Persona | Story | What the demo shows |
 |---|---|---|
-| 1. Curated knowledge base | The only source of truth: standards, 25 countries, age groups, factors (YAML) | `knowledge/` |
-| 2. Deterministic calculator | Computes energy (Mifflin-St Jeor / Schofield × PAL), protein, macros, sodium and micronutrient targets so the model never invents numbers | `src/foodfm/calculators.py` |
-| 3. Fine-tuning (QLoRA) | Trains on an instruction dataset generated from the knowledge base: personalised plans, standards Q&A, country habits, age/factor advice, safety cases, and **refusals of off-topic questions** | `src/foodfm/dataset.py`, `src/foodfm/train.py` |
-| 4. Retrieval grounding (RAG) | At inference, the profile targets and the top BM25-matched knowledge chunks go into the prompt, and a system prompt limits the model to nutrition | `src/foodfm/grounding.py`, `src/foodfm/retrieval.py` |
+| 👩🏽 Priya 🇮🇳 | 32, vegetarian, tired | Iron, B12 and vitamin D deficiency confirmed by labs → iron, D3 and B12 supplements; palak, chana, rajma |
+| 👨🏼 James 🇺🇸 | 45, desk job, fast food | Sodium, sugar and saturated fat over the limit; prediabetes HbA1c; fibre and vitamin C gaps |
+| 🤰🏿 Amara 🇳🇬 | 27, pregnant (2nd trimester) | Anaemia, folate and calcium gaps; pregnancy-specific iron and folic acid; ewa, dagaa, ugwu |
+| 👴🏻 Hiroshi 🇯🇵 | 74, retired | Vitamin D deficiency; B12 intake fine but blood level low (an absorption flag); salt from miso/ramen |
+
+## How it works
 
 ```
- knowledge/*.yaml ──► dataset.py ──► data/train.jsonl ──► train.py (QLoRA) ──► outputs/foodfm-lora
-        │                                                                          │
-        ├──► calculators.py ─┐                                                     ▼
-        └──► retrieval.py ───┴──► grounding.py (system prompt + profile + facts) ──► infer.py ──► answer
-                                                         ▲
-                                            cli.py selection prompts
+ 📸 meal photos ──► food detection ──► foods + portions ──┐
+                    (vision model / file name / manual)    ├─► daily intake ─┐
+ 🧑 profile + country ──► RDA targets (age, sex, pregnancy, diet) ───────────┼─► gap analysis ─► 🎯 gaps
+ 🧪 lab report (PDF/TXT/CSV) ──► parser ──► marker status ───────────────────┘          │      💊 supplements
+                                                                                         └────► 🥗 local foods
 ```
 
-## Quick start
+| Step | Logic | Code / data |
+|---|---|---|
+| Food detection | A photo's label (file name today, vision-model caption when connected) is matched against a database of 97 foods and dishes from all 25 countries; the user confirms foods and portions | `gaps.detect_foods`, `knowledge/foods.yaml` |
+| Intake | Nutrients per serving × portions, summed over the day | `gaps.daily_intake` |
+| Targets | NASEM RDA/AI by life stage and sex, energy from Mifflin-St Jeor / Schofield × activity, protein by g/kg, ×1.8 iron for plant-based diets, WHO sodium/sugar/saturated-fat limits | `calculators.py`, `knowledge/standards.yaml` |
+| Gap status | < 50% of RDA deficient · 50–80% low · 80–100% borderline · ≥ 100% adequate | `gaps.analyze` |
+| Labs | 13 markers (haemoglobin, ferritin, vitamin D, B12, folate, zinc, calcium, albumin, HbA1c, glucose, LDL, triglycerides, TSH) with unit conversion and sex/pregnancy-aware cut-offs. Labs escalate gaps, and a "diet fine but blood low" result adds an absorption flag | `labs.py`, `knowledge/labs.yaml` |
+| Supplements | Recommended on a deficient/low lab result, on a large diet shortfall, or always (B12 for vegans and over-50s, folic acid and iron in pregnancy, D3 at 71+). Blocked on unsafe results (high ferritin → no iron; high calcium → no calcium or D). Children get "ask your paediatrician" in place of a dose | `gaps._supplements` |
+| Food picks | The highest nutrient-per-serving foods for each gap, local foods weighted 1.5×, filtered by diet and allergies, excluding salty, sugary or fatty items | `gaps._food_recommendations` |
+
+## Run it
+
+**Web app** (the same app GitHub Pages serves):
+
+```bash
+python scripts/build_site.py && python -m http.server -d _site 8000
+```
+
+Then open http://localhost:8000. The analysis engine is this repo's Python code, running in the browser with
+[Pyodide](https://pyodide.org). Nothing a user uploads leaves their device.
+
+**Command line:**
 
 ```bash
 pip install -e ".[dev]"
 ```
 
 ```bash
-foodfm
+foodfm analyze --persona priya
 ```
-
-That opens the main menu:
-
-```
-What would you like to do?
-   1. Get a personalised nutrition recommendation
-   2. Chat with the model (nutrition questions)
-   3. Build the training dataset from the knowledge base
-   4. Fine-tune (QLoRA) an open model
-   5. Evaluate a model on the held-out set
-   6. List available open models
-   7. Exit
-```
-
-**Recommendation questionnaire**: country (25 options) → age (`34` or `8 months`) → sex → weight/height
-(optional) → pregnancy/lactation (when it applies) → activity → dietary pattern → medical conditions
-(multi-select) → allergies (multi-select) → goal → budget → climate → lifestyle → **answer engine**:
-
-1. **Built-in grounded engine**: instant, no GPU; renders a plan straight from the standards and country rules.
-2. **Open LLM + retrieval**: pick a base model from `configs/models.yaml`, optionally with your fine-tuned adapter.
-
-You can save the profile to JSON and skip the questionnaire next time:
 
 ```bash
-foodfm recommend --profile examples/profile_india_pregnant_vegetarian.json --engine builtin --show-prompt
+foodfm analyze --input my_day.json --labs my_report.txt --json
 ```
 
-## Fine-tuning your own model
+`my_day.json` looks like this:
 
-The default is QLoRA: 4-bit base, LoRA r=16 on all linear layers. A 7–8B model needs about 16 GB of VRAM
-(a T4/A10/L4 or an RTX 4090). `phi3.5-mini` fits in about 10 GB.
+```json
+{"profile": {"country": "india", "age": 32, "sex": "female", "weight_kg": 58, "height_cm": 158,
+             "activity_level": "light", "dietary_pattern": "vegetarian_lacto_ovo"},
+ "meals": [{"name": "Lunch", "items": [{"food": "dal", "servings": 1}, {"food": "white_rice", "servings": 1.5}]}]}
+```
+
+## Real photo recognition (vision model)
+
+The static demo can't run a vision model, so for uploaded photos it matches foods from the **file name**
+(for example `dal_rice_lunch.jpg`), and the user can tag foods by hand. To recognise real photos, run any
+vision model behind an HTTP endpoint and pass it to the page:
+
+```
+https://<user>.github.io/FoodFoundationModels/?vision=https://your-server/detect
+```
+
+The page `POST`s each photo as multipart (`image`, `country`). The endpoint returns either
+`{"labels": ["dal", "rice", "curd"]}`, which is mapped onto the food database, or
+`{"items": [{"food": "dal", "servings": 1.5}]}`. Good open choices include **Qwen2.5-VL** or **LLaVA**
+prompted to list the dishes and portions, or a Food-101 classifier. The repo's QLoRA pipeline (below) can
+fine-tune the language side.
+
+## Lab reports
+
+- **Text-based PDF, TXT, CSV**: parsed automatically (pdf.js). For example `Hemoglobin 10.8 g/dL`,
+  `Vitamin D (25-OH) 45 nmol/L` (converted to 18 ng/mL) and `HbA1c, 6.2, %`.
+- **Photos of reports**: type the values into the form. OCR would need the vision backend.
+- Every value can be edited before analysis.
+
+## Deploying on GitHub
+
+| What | Workflow |
+|---|---|
+| Tests on every push and pull request (Python 3.10, 3.12, 3.13) | `.github/workflows/ci.yml` |
+| Web app on GitHub Pages | `.github/workflows/pages.yml` |
+
+One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**. After that, every
+push to the default branch that changes the engine, data or page redeploys it.
+
+## Customising the data
+
+Everything is plain YAML in `knowledge/`:
+
+| File | Contents |
+|---|---|
+| `foods.yaml` | food composition per serving, diet tag, allergens, countries, photo keywords |
+| `labs.yaml` | lab markers (aliases, units, cut-offs) and supplement rules (doses, triggers, cautions) |
+| `standards.yaml` | RDA/AI tables, WHO limits, energy method |
+| `countries.yaml` | food habits, guidelines and swaps for the 25 countries |
+| `demo_personas.yaml` | the demo personas (default values) |
+| `age_groups.yaml`, `factors.yaml` | life stages and personal factors |
+
+Run `pytest` after editing; it checks the data is consistent. For production, swap `foods.yaml` for a
+validated national food composition database.
+
+## Also included: grounded open-LLM pipeline (optional)
+
+The repo still contains the toolkit for fine-tuning an open LLM (Qwen, Llama, Mistral, Gemma, Phi) on this
+knowledge base with QLoRA. It isn't needed for the analyzer, but it can generate narrative explanations or
+serve as the language side of a vision-language model.
 
 ```bash
 pip install -e ".[train]"
@@ -97,89 +149,27 @@ foodfm train --model qwen2.5-7b
 foodfm evaluate --adapter outputs/foodfm-lora
 ```
 
-```bash
-foodfm chat --adapter outputs/foodfm-lora --profile examples/profile_usa_adult_diabetes.json
-```
-
-- `--model` takes a key from `configs/models.yaml` (`qwen2.5-7b` (default), `qwen3-8b`, `llama3.1-8b`,
-  `mistral-7b`, `gemma2-9b`, `phi3.5-mini`, `qwen2.5-0.5b`) or any Hugging Face model id / local path.
-- Gated models (Llama, Gemma) need `huggingface-cli login` and licence acceptance first.
-- Hyper-parameters live in `configs/train.yaml`. Override them with `--epochs`, `--max-steps`, `--output-dir`, `--no-4bit`.
-- Loss is computed only on the assistant reply. Templates without a system role (Gemma) get the system
-  prompt merged into the first user turn automatically.
-
-The dataset at the defaults is about 4.7k examples (split into train/eval so no question+answer pair is in both):
-
-| kind | content |
-|---|---|
-| `profile_plan` | random but valid profiles (all 25 countries, every age band, factors combined) → full grounded plan |
-| `standard_fact` | micronutrient values for each life stage and sex, WHO goals, AMDR |
-| `country_habit` | staples, concerns, guideline, traditions, swaps, cultural practices, local nutrient sources |
-| `age_group` / `factor` | life-stage priorities; adjustments for each condition, allergy, diet, goal and so on |
-| `safety` | child weight loss, very-low-calorie diets, honey for infants, CKD, pregnancy, warfarin |
-| `out_of_scope` | coding, trivia, politics, drug dosing… → polite refusal (upsampled) |
-
-**Evaluation** (`foodfm evaluate`) reports, per kind: `number_recall` (were the standard values reproduced?),
-`token_f1`, `refusal_acc` on off-topic questions, and `false_refusal` on in-scope ones. Run it on the base
-model and on the adapter to measure what fine-tuning added.
-
-## Customising the knowledge
-
-Everything the model knows is in plain YAML:
-
-- `knowledge/standards.yaml`: WHO goals, AMDR, protein, micronutrient tables, energy method
-- `knowledge/countries.yaml`: the 25 countries (edit the list to rank "top 25" by GDP or anything else)
-- `knowledge/age_groups.yaml`: life stages, pregnancy and lactation
-- `knowledge/factors.yaml`: every selectable factor with its adjustments and safety notes
-
-After editing, run `pytest` (it checks completeness and catches YAML pitfalls), then rebuild the dataset and
-retrain. Changes to the knowledge base reach the built-in engine and retrieval right away; the fine-tuned
-weights pick them up after retraining.
-
-## Deploying on GitHub
-
-| What | How | Workflow |
-|---|---|---|
-| Tests on every push and pull request | GitHub Actions on Python 3.10, 3.12 and 3.13: pytest, dataset build, example profiles | `.github/workflows/ci.yml` |
-| Public web planner | GitHub Pages: the questionnaire and the built-in grounded engine run **in the visitor's browser** through Pyodide, so no server is needed and nothing entered leaves the device | `.github/workflows/pages.yml` |
-
-One-time setup for the web planner: in the repository go to **Settings → Pages → Build and deployment → Source**
-and pick **GitHub Actions**. After that, every push to the default branch that touches the engine, knowledge
-or web page redeploys it to `https://<user>.github.io/FoodFoundationModels/`. You can also run the workflow by
-hand from the **Actions** tab.
-
-To preview the site locally:
-
-```bash
-python scripts/build_site.py && python -m http.server -d _site 8000
-```
-
-GitHub Pages only serves static files, so the **fine-tuned LLM can't run there**. To host the model as well:
-
-- **Weights**: push the LoRA adapter (`outputs/foodfm-lora`, tens of MB) to the Hugging Face Hub, or attach it
-  to a GitHub Release. Don't commit it to git.
-- **Model serving**: a GPU host such as a Hugging Face Space, a vLLM server or a cloud VM running
-  `foodfm chat`, behind an API.
+A 7–8B model needs about 16 GB of VRAM. `scripts/smoke_train_tiny.py` checks the pipeline offline with a tiny
+random model. Model choices are in `configs/models.yaml` and hyper-parameters in `configs/train.yaml`.
 
 ## Project layout
 
 ```
-.github/      CI and GitHub Pages workflows
-configs/      models.yaml (selectable open models), train.yaml (QLoRA hyper-parameters)
-knowledge/    curated nutrition knowledge base (YAML)
-examples/     sample profiles
-src/foodfm/   knowledge, profile, calculators, retrieval, grounding, dataset, chat_format, train, infer, evaluate, cli
-web/          static planner page (index.html) and its Python bridge (web_api.py)
-scripts/      build_site.py (Pages bundle), smoke_train_tiny.py (offline train + infer check with a tiny random model)
+web/          NutriScan app (index.html) and its Python bridge (web_api.py)
+src/foodfm/   gaps.py (analyzer), labs.py (lab parsing), calculators.py (RDA/energy), knowledge.py, profile.py,
+              cli.py, and the optional LLM pipeline (dataset, train, infer, evaluate, grounding, retrieval)
+knowledge/    foods, labs and supplements, standards, countries, demo personas (YAML)
+scripts/      build_site.py (Pages bundle), smoke_train_tiny.py
+configs/      open-model choices and QLoRA settings
 tests/        pytest suite
 ```
 
 ## Limitations
 
-- Reference values describe healthy populations. Clinical nutrition (CKD, eating disorders, severe
-  malnutrition, paediatrics) is flagged and referred to a clinician on purpose.
-- Children's BMI needs WHO BMI-for-age z-scores, and energy for under-3s follows growth and appetite;
-  neither is computed.
-- The country profiles summarise typical national patterns. Regional, urban/rural and individual diets vary widely.
-- Guideline editions change (for example the Dietary Guidelines for Americans 2025–2030). Check
-  `last_reviewed` in each file.
+- Portions come from photos and standard servings, so intake is an estimate. One day of meals may not be
+  typical, so analyse several days for a better picture.
+- Food values are approximate reference values, and recipes vary. Iodine, potassium, omega-3 and vitamin K
+  are not yet tracked.
+- Lab cut-offs vary between laboratories and guidelines; the person's own value is always shown.
+- Clinical cases (pregnancy, children, kidney disease, eating disorders) get general guidance and are referred
+  to a clinician.

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -43,6 +43,15 @@ class KnowledgeBase:
     special_life_stages: dict[str, Any]
     factors: dict[str, Any]
     models: dict[str, Any]
+    foods: list[dict[str, Any]] = field(default_factory=list)
+    labs: dict[str, Any] = field(default_factory=dict)
+    personas: list[dict[str, Any]] = field(default_factory=list)
+
+    def food(self, food_id: str) -> dict[str, Any]:
+        for f in self.foods:
+            if f["id"] == food_id:
+                return f
+        raise KeyError(f"Unknown food: {food_id!r}")
 
     # ---- countries -------------------------------------------------------
     def country(self, key: str) -> dict[str, Any]:
@@ -106,4 +115,7 @@ def load_kb() -> KnowledgeBase:
         special_life_stages=ages["special_life_stages"],
         factors=_load(KNOWLEDGE_DIR / "factors.yaml")["factors"],
         models=_load(CONFIG_DIR / "models.yaml"),
+        foods=_load(KNOWLEDGE_DIR / "foods.yaml")["foods"],
+        labs=_load(KNOWLEDGE_DIR / "labs.yaml"),
+        personas=_load(KNOWLEDGE_DIR / "demo_personas.yaml")["personas"],
     )
