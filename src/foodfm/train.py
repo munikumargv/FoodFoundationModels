@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -85,6 +86,11 @@ def train(model_key: str | None = None, config_path: str | None = None, **overri
     model.print_trainable_parameters()
 
     out_dir = cfg["output_dir"]
+    # warmup_ratio was removed in transformers 5, so convert it to explicit steps.
+    steps_per_epoch = math.ceil(len(train_rows) / (cfg["per_device_train_batch_size"] * cfg["gradient_accumulation_steps"]))
+    total_steps = cfg.get("max_steps") or -1
+    if total_steps <= 0:
+        total_steps = math.ceil(steps_per_epoch * cfg["num_train_epochs"])
     args = TrainingArguments(
         output_dir=out_dir,
         num_train_epochs=cfg["num_train_epochs"],
@@ -92,7 +98,7 @@ def train(model_key: str | None = None, config_path: str | None = None, **overri
         per_device_train_batch_size=cfg["per_device_train_batch_size"],
         per_device_eval_batch_size=cfg["per_device_train_batch_size"],
         gradient_accumulation_steps=cfg["gradient_accumulation_steps"],
-        warmup_ratio=cfg["warmup_ratio"],
+        warmup_steps=int(cfg["warmup_ratio"] * total_steps),
         lr_scheduler_type=cfg["lr_scheduler_type"],
         logging_steps=cfg["logging_steps"],
         save_steps=cfg["save_steps"],
@@ -102,7 +108,7 @@ def train(model_key: str | None = None, config_path: str | None = None, **overri
         gradient_checkpointing=use_cuda,
         report_to="none",
         seed=cfg["seed"],
-        max_steps=cfg.get("max_steps", -1),
+        max_steps=cfg.get("max_steps") or -1,
         remove_unused_columns=False,
     )
     trainer = Trainer(model=model, args=args, train_dataset=train_rows, eval_dataset=eval_rows, data_collator=_Collator(tokenizer.pad_token_id))
